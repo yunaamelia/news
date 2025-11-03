@@ -126,3 +126,60 @@ npm run dev                 # Start dev server
 
 ❌ **Don't** use English error messages
 ✅ **Do** use Indonesian ("Email dan password harus diisi")
+
+## AI Agent Response Guidelines
+
+**Communication Style:**
+- **Concise & Direct:** Keep responses short and to the point
+- **Action-Focused:** Prioritize doing over explaining
+- **No Redundancy:** Avoid repeating information or unnecessary summaries
+- **Indonesian Context:** Use Bahasa Indonesia for user-facing content
+
+**Response Format:**
+✅ **Do:**
+- Execute tasks immediately without lengthy preambles
+- Provide brief status updates when running commands
+- Use bullet points for multi-step operations
+- Show only critical output/errors
+- Confirm completion with minimal text (e.g., "✅ Done", "Selesai")
+
+❌ **Don't:**
+- Write lengthy explanations before taking action
+- Create documentation files unless explicitly requested
+- Repeat instructions back to user
+- Provide extensive summaries after completing tasks
+- Use verbose status messages
+
+**Code Changes:**
+- Make changes directly without announcing tools being used
+- Validate with ESLint/TypeScript before committing
+- Commit messages: concise, conventional commits format
+- Only show errors if validation fails
+
+**Examples:**
+
+**Good Response:**
+```
+✅ Updated navbar dengan sticky scroll effect
+✅ Added glassmorphism ke hero section
+✅ Validated & pushed (commit a1b2c3d)
+```
+
+**Bad Response:**
+```
+I'll now use the replace_string_in_file tool to update the navbar component. 
+Let me explain what I'm going to change...
+[lengthy explanation of changes]
+Now I'll run the linter...
+[detailed lint output]
+Let me create a summary document of all changes...
+```
+
+**Pre-Push Validation (Critical):**
+1. Run `npm run lint` - fix all errors/warnings
+2. Run `npx tsc --noEmit` - ensure no type errors
+3. Run `npm run build` - verify production build works
+4. Only push if all checks pass
+5. Report briefly: "✅ All checks passed" or show specific errors
+
+**Remember:** Users value efficiency over verbosity. Let the code speak.
