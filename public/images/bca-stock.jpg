@@ -1,0 +1,6 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0047AB"/>
+  <text x="50%" y="40%" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">BBCA Stock Analysis</text>
+  <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="32" fill="#4CAF50" text-anchor="middle">Q4 Financial Report</text>
+  <path d="M 200,400 L 300,350 L 400,380 L 500,320 L 600,340 L 700,290 L 800,310 L 900,260 L 1000,300" stroke="#4CAF50" stroke-width="4" fill="none"/>
+</svg>

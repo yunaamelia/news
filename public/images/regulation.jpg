@@ -1,0 +1,9 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#2C3E50"/>
+  <text x="50%" y="35%" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">OJK Regulation</text>
+  <text x="50%" y="50%" font-family="Arial, sans-serif" font-size="32" fill="#E74C3C" text-anchor="middle">New Crypto Exchange Rules</text>
+  <text x="50%" y="65%" font-family="Arial, sans-serif" font-size="24" fill="#ECF0F1" text-anchor="middle">Indonesia 2025</text>
+  <rect x="100" y="450" width="150" height="100" fill="#E74C3C" opacity="0.3"/>
+  <rect x="300" y="480" width="150" height="70" fill="#3498DB" opacity="0.3"/>
+  <rect x="500" y="460" width="150" height="90" fill="#F39C12" opacity="0.3"/>
+</svg>
