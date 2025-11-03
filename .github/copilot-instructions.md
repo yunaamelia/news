@@ -148,127 +148,290 @@ git push
 
 ## Architecture Overview
 
-**Indonesian Financial News Platform** - Next.js 16 App Router with PostgreSQL, focused on stocks (saham) & crypto news.
+**Indonesian Financial News Platform** - Next.js 16 with App Router, React 19, PostgreSQL via Prisma 6, focused on Indonesian stocks (saham) & crypto news.
 
 **Critical Stack Decisions:**
-- NextAuth + Prisma Adapter for auth (centralized in `app/lib/auth.ts` to prevent circular imports)
-- Prisma Client singleton in `app/lib/prisma.ts` with global caching for dev
-- Market data cached via `MarketDataCache` model (5min TTL) - check cache before external API calls
-- All API routes use `export const dynamic = "force-dynamic"` for real-time data
+- **Next.js 16**: App Router with React Compiler enabled (`reactCompiler: true` in next.config.ts)
+- **Auth**: NextAuth 4.24.13 + Prisma Adapter, centralized in `app/lib/auth.ts` (never import from route handlers)
+- **Database**: Prisma 6.18 singleton in `app/lib/prisma.ts` with global caching for dev (prevents connection pool exhaustion)
+- **Caching Strategy**: `MarketDataCache` model (5min TTL) + ISR for article pages (300s revalidate)
+- **Middleware**: `withAuth` from NextAuth protects `/watchlist`, `/portfolio`, `/dashboard/:path*`
 
-## Database Schema (10 Models)
+## Database Schema Architecture
 
-**Core relationships:**
-- `User` → multiple `Watchlist`, `Portfolio`, `Comment`, `Newsletter`
-- `Article` → multiple `Comment` (with nested replies via self-referencing `parentId`)
-- `MarketDataCache` has composite unique key: `symbol_assetType`
+**10 Models in 4 domains:**
+
+1. **Auth Domain** (NextAuth spec):
+   - `User` (role: USER|EDITOR|ADMIN, isPremium flag)
+   - `Account`, `Session`, `VerificationToken`
+
+2. **Content Domain**:
+   - `Article` (status: DRAFT|PUBLISHED|ARCHIVED, category enum, tags array)
+   - `Comment` (self-referencing for nested replies via `parentId`)
+
+3. **Finance Domain**:
+   - `Watchlist` (composite unique: userId + symbol + assetType)
+   - `Portfolio` (tracks buys with quantity, buyPrice, buyDate)
+   - `MarketDataCache` (composite unique: symbol + assetType, expires in 5min)
+
+4. **Marketing Domain**:
+   - `Newsletter` (frequency: DAILY|WEEKLY|MONTHLY)
+
+**Critical relationships:**
+- `User` 1:N `Watchlist`, `Portfolio`, `Comment`, `Newsletter`
+- `Article` 1:N `Comment` (nested via `Comment.parentId` self-reference)
+- `MarketDataCache` uses composite unique key `symbol_assetType` for upserts
 
 **Key enums:**
-- `AssetType`: `SAHAM` (stocks) | `KRIPTO` (crypto)
+- `AssetType`: `SAHAM` | `KRIPTO` (used across Watchlist, Portfolio, MarketDataCache)
 - `ArticleCategory`: `SAHAM` | `KRIPTO` | `ANALISIS` | `EDUKASI` | `REGULASI` | `TEKNOLOGI`
+- `ArticleStatus`: `DRAFT` | `PUBLISHED` | `ARCHIVED` (filter by PUBLISHED for public pages)
 - `UserRole`: `USER` | `EDITOR` | `ADMIN`
 
-## Authentication Pattern
+## Authentication Pattern (Critical)
 
-**ALWAYS import from centralized config:**
+**ALWAYS import from centralized config to avoid circular dependencies:**
 ```typescript
 import { authOptions } from "@/app/lib/auth";
 import { getServerSession } from "next-auth";
 
 const session = await getServerSession(authOptions);
+if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 ```
 
 **Session structure (JWT strategy):**
 ```typescript
-session.user = { id, email, name, image, role }
-```
-
-**Protected routes:** Check `session` existence, handle 401 responses
-
-## API Route Conventions
-
-**Standard structure:**
-```typescript
-export const dynamic = "force-dynamic"; // Required for fresh data
-
-export async function GET(req: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  
-  // Query params: req.nextUrl.searchParams.get('param')
-  // Body: await req.json()
+session.user = { 
+  id: string,      // Added in JWT callback
+  email: string, 
+  name: string, 
+  image: string,
+  role: string     // Added in JWT callback (USER|EDITOR|ADMIN)
 }
 ```
 
-**Pagination pattern (used in `/api/articles`):**
-- Query params: `page` (default: 1), `limit` (default: 10)
-- Response: `{ articles, pagination: { page, limit, total, totalPages } }`
+**Why centralized?** NextAuth route handler (`/api/auth/[...nextauth]/route.ts`) would create circular imports if imported elsewhere. Always use `app/lib/auth.ts`.
 
-**Filter pattern:** 
+## API Route Patterns
+
+**Standard structure for protected routes:**
+```typescript
+export const dynamic = "force-dynamic"; // REQUIRED for real-time data
+
+export async function GET(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  
+  // Query params: req.nextUrl.searchParams.get('param')
+  // Body (POST/PUT): const body = await req.json()
+  
+  // Use session.user.id for user-specific queries
+}
+```
+
+**Pagination convention (`/api/articles`):**
+```typescript
+// Query params: ?page=1&limit=10
+const page = parseInt(searchParams.get('page') || '1');
+const limit = parseInt(searchParams.get('limit') || '10');
+const skip = (page - 1) * limit;
+
+// Response shape:
+{
+  articles: Article[],
+  pagination: { page, limit, total, totalPages }
+}
+```
+
+**Filter patterns in use:**
 - Articles: `?category=SAHAM&search=keyword&premium=true`
-- Use Prisma `where` with optional conditions
+- Watchlist: `?assetType=KRIPTO`
+- Build dynamic Prisma `where` with conditional spreads:
+  ```typescript
+  const where = {
+    status: "PUBLISHED",
+    ...(category && { category: category as ArticleCategory }),
+    ...(search && { 
+      OR: [
+        { title: { contains: search, mode: 'insensitive' } },
+        { content: { contains: search, mode: 'insensitive' } }
+      ]
+    })
+  };
+  ```
 
-## Market Data Integration
+## Market Data Integration (2-Tier Caching)
 
-**Flow:**
-1. Check `MarketDataCache` table first (composite key: `symbol + assetType`)
-2. If cache expired or missing, fetch from external API
-3. Upsert cache with new `expiresAt` (5min from now)
-4. Mock data fallback in dev (see `app/lib/market-data.ts`)
+**Critical flow (app/lib/market-data.ts):**
+1. **Check DB cache first**: Query `MarketDataCache` by composite key `{symbol, assetType}`
+2. **If cache valid** (expiresAt > now): Return cached JSON data
+3. **If expired/missing**: Fetch from external API
+4. **Upsert cache**: Store with `expiresAt = now + 5min`
+5. **Fallback**: Return mock data if API fails (dev safety)
 
-**APIs:**
-- Stocks: Alpha Vantage (currently mock data for Indonesian stocks)
-- Crypto: CoinGecko API (`/api/v3/coins/{coinId}`)
+**APIs in use:**
+- **Stocks (SAHAM)**: Mock data (IDX API integration pending) - see `getMarketData()`
+- **Crypto (KRIPTO)**: CoinGecko free tier (`/api/v3/coins/{coinId}`) - see `getCryptoData()`
+  - Uses IDR prices when available, falls back to USD * 15000
+  - Params: `localization=false`, `tickers=false` to minimize payload
 
-**Helper functions in `market-data.ts`:**
-- `getMarketData(symbol, assetType)` - generic fetcher
-- `getCryptoData(coinId)` - CoinGecko specific
-- `formatIDR(amount)`, `formatNumber(num, decimals)` - Indonesian locale
+**Helper functions:**
+- `getMarketData(symbol, assetType)` - Generic fetcher with DB cache layer
+- `getCryptoData(coinId)` - CoinGecko-specific wrapper
+- `formatIDR(amount)` - Indonesian Rupiah formatter (id-ID locale)
+- `formatNumber(num, decimals)` - Indonesian number format
+
+**Why composite unique key?** Same symbol can exist as both SAHAM and KRIPTO (e.g., "BTC" might be stock ticker elsewhere).
+
+## ISR & Caching Strategy
+
+**Category pages** (`/saham`, `/kripto`, `/analisis`, etc.):
+```typescript
+// In async function getArticles():
+fetch(`/api/articles?category=SAHAM`, { 
+  next: { revalidate: 300 }  // ISR: revalidate every 5 minutes
+});
+```
+
+**Article detail pages** (`/artikel/[slug]`):
+```typescript
+export const revalidate = 300;           // ISR interval
+export const dynamicParams = true;       // On-demand generation for new slugs
+
+export async function generateStaticParams() {
+  // Pre-render top 20 published articles at build time
+  const articles = await prisma.article.findMany({
+    where: { status: "PUBLISHED" },
+    select: { slug: true },
+    take: 20,
+  });
+  return articles.map(a => ({ slug: a.slug }));
+}
+```
+
+**User-specific pages** (watchlist, portfolio):
+```typescript
+export const dynamic = "force-dynamic";  // No caching, always fresh
+```
+
+## Next.js 15+ Breaking Changes
+
+**Async params pattern:**
+```typescript
+// ❌ OLD (Next.js 14):
+export default function Page({ params }) {
+  const { slug } = params;
+}
+
+// ✅ NEW (Next.js 15+):
+export default async function Page({ params }) {
+  const { slug } = await params;  // params is now a Promise
+}
+```
 
 ## Component Patterns
 
-**Dark mode:** Class-based (`dark:bg-gray-900`), toggled via `document.documentElement.classList`
+**Dark mode** (manual toggle, no persistent storage):
+- Class-based: `dark:bg-gray-900`, `dark:text-white`
+- Toggle via `document.documentElement.classList.toggle('dark')`
 
-**Indonesian text:** Use Bahasa Indonesia for UI text, error messages in Indonesian
+**Indonesian locale**:
+- All UI text in Bahasa Indonesia
+- Error messages: "Email dan password harus diisi" (not English)
+- Number/currency: Use `formatIDR()` and `formatNumber()` from `market-data.ts`
 
-**Common utilities:**
-- Type imports from `@/app/types`
-- Prisma client from `@/app/lib/prisma`
-- NextAuth types augmented in `app/types/index.ts`
+**Icon library**: `react-icons/fi` (Feather Icons) used consistently across app
 
-## Development Commands
+## Development Workflow
 
 ```bash
-npx prisma generate          # After schema changes
-npx prisma db push          # Sync to database (dev)
-npx prisma studio           # GUI for database
-npm run dev                 # Start dev server
+# Essential commands:
+npx prisma generate              # Regenerate client after schema changes
+npx prisma db push              # Sync schema to DB (dev only, skips migrations)
+npx prisma studio               # Visual DB editor (localhost:5555)
+npx prisma migrate dev --name   # Create migration (production approach)
+npm run dev                     # Dev server with Turbopack
+
+# Seed database:
+npx prisma db seed              # Runs prisma/seed.ts (tsx required)
 ```
 
-**Required env vars:**
-- `DATABASE_URL` (PostgreSQL connection)
-- `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-- `ALPHA_VANTAGE_API_KEY`, `NEXT_PUBLIC_COINGECKO_API_KEY`
+**Environment variables (required):**
+```bash
+DATABASE_URL                    # PostgreSQL connection string
+NEXTAUTH_URL                    # http://localhost:3000 (dev)
+NEXTAUTH_SECRET                 # openssl rand -base64 32
+GOOGLE_CLIENT_ID                # OAuth (optional)
+GOOGLE_CLIENT_SECRET            # OAuth (optional)
+ALPHA_VANTAGE_API_KEY          # Stock data (currently unused, mock fallback)
+COINGECKO_API_KEY              # Crypto data (optional, public API used)
+```
 
-## Key Files
+## Project Structure (Key Directories)
 
-- `app/lib/auth.ts` - NextAuth config (import authOptions from here)
-- `app/lib/prisma.ts` - Prisma singleton
-- `app/lib/market-data.ts` - Market data fetching & caching logic
-- `prisma/schema.prisma` - Source of truth for database structure
-- `app/types/index.ts` - NextAuth augmentation + shared types
+```
+app/
+├── lib/                     # 🔧 CRITICAL: Import from here, not API routes
+│   ├── auth.ts             # NextAuth config - import authOptions from here
+│   ├── prisma.ts           # Prisma singleton - import prisma from here
+│   ├── market-data.ts      # Market API + cache logic
+│   └── utils.ts            # Shared utilities
+├── types/
+│   └── index.ts            # NextAuth augmentation + shared types
+├── api/                    # API routes (export const dynamic = "force-dynamic")
+│   ├── articles/          # CRUD + comments
+│   ├── auth/[...nextauth] # NextAuth handler (don't import authOptions from here!)
+│   ├── market/            # Market data endpoints
+│   ├── watchlist/         # User watchlist CRUD
+│   └── portfolio/         # User portfolio CRUD
+├── components/
+│   ├── articles/          # ArticleCard, ArticleGrid
+│   ├── market/            # MarketCard, MarketOverview
+│   ├── layout/            # Navbar, Footer
+│   └── ui/                # Reusable UI components
+└── (pages)/               # Route segments: saham/, kripto/, artikel/[slug], etc.
+```
 
-## Common Pitfalls
+## GitHub Actions CI/CD
 
-❌ **Don't** import authOptions directly from `/api/auth/[...nextauth]/route.ts` (circular dependency)
-✅ **Do** import from `@/app/lib/auth`
+**Workflows in `.github/workflows/`:**
+1. **ci.yml** - Runs on push to main (lint, tsc, build, audit)
+2. **code-review.yml** - Runs on PRs (console.log detection, bundle size)
+3. **deploy-preview.yml** - Vercel preview (requires secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID)
+4. **performance.yml** - Lighthouse CI + bundle analysis
 
-❌ **Don't** fetch market data without checking cache first
-✅ **Do** use `getMarketData()` or `getCryptoData()` helpers
+**Deployment setup:**
+- Run `./scripts/setup-vercel.sh` for automated Vercel configuration
+- Or follow `.github/QUICK_START_VERCEL.md` for manual setup
+- Secrets configured via `gh secret set` or GitHub UI
 
-❌ **Don't** forget `export const dynamic = "force-dynamic"` on API routes
-✅ **Do** add it for real-time data endpoints
+## Critical Gotchas
 
-❌ **Don't** use English error messages
-✅ **Do** use Indonesian ("Email dan password harus diisi").
+❌ **Circular imports**: Never import `authOptions` from `/api/auth/[...nextauth]/route.ts`
+✅ Always import from `@/app/lib/auth`
+
+❌ **Missing dynamic export**: Forgetting `export const dynamic = "force-dynamic"` on user-specific API routes
+✅ Add it to all routes that need fresh data (watchlist, portfolio, etc.)
+
+❌ **Market data without cache**: Directly calling external APIs
+✅ Use `getMarketData()` or `getCryptoData()` which handle caching
+
+❌ **English error messages**: `throw new Error("Invalid email")`
+✅ Use Indonesian: `throw new Error("Email tidak valid")`
+
+❌ **Wrong enum casing**: `category: "saham"` (lowercase)
+✅ Use proper enum: `category: ArticleCategory.SAHAM` or cast `as ArticleCategory`
+
+❌ **Prisma client not generated**: TypeScript errors after schema changes
+✅ Run `npx prisma generate` after any `schema.prisma` modifications
+
+❌ **Build-time database connection**: `generateStaticParams` fails if DB unreachable during build
+✅ Wrap in try-catch, return empty array on error (see `artikel/[slug]/page.tsx`)
+
+## Package-Specific Notes
+
+**npm overrides**: `"preact": "10.24.3"` in package.json resolves nested dependency conflict between @auth/core versions (fixes CI npm ci errors)
+
+**React Compiler**: Enabled via `babel-plugin-react-compiler@1.0.0` and `reactCompiler: true` in next.config.ts (automatic memoization)
