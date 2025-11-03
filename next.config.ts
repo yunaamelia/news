@@ -4,26 +4,33 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   
-  // Allow cross-origin requests in development
+  // Configure allowed dev origins for network access
+  allowedDevOrigins: [
+    "10.184.0.2:3000", // Network IP
+    "*.local-origin.dev",
+  ],
+
+  // CORS headers for API routes
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/api/:path*",
         headers: [
           {
             key: "Access-Control-Allow-Origin",
             value: "*",
           },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
         ],
       },
     ];
-  },
-
-  // Configure allowed dev origins for network access
-  experimental: {
-    allowedDevOrigins: [
-      "10.184.0.2:3000", // Network IP
-    ],
   },
 
   // Image domains for external images
