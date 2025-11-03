@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
+/* Light mode (default) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+/* Dark mode - both system preference and manual toggle */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -44,13 +58,6 @@
     100% {
       background-position: 0% 50%;
     }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
   }
 }
 
