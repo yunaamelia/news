@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, ArticleCategory, ArticleStatus, AssetType } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -9,7 +9,7 @@ async function main() {
   // Create demo users
   const passwordHash = await hash("demo123", 12);
 
-  const adminUser = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: "admin@berita-finansial.com" },
     update: {},
     create: {
@@ -78,11 +78,11 @@ Beberapa faktor yang mendorong rally ini:
 
 Analis memproyeksikan target berikutnya di $120,000 jika momentum terjaga.`,
       coverImage: "/images/bitcoin-rally.jpg",
-      category: "KRIPTO",
+      category: ArticleCategory.KRIPTO,
       tags: ["Bitcoin", "Cryptocurrency", "Analisis Teknikal", "Bull Market"],
       author: "Budi Santoso",
       authorImage: "/images/authors/budi.jpg",
-      status: "PUBLISHED",
+      status: ArticleStatus.PUBLISHED,
       isPremium: false,
       views: 1523,
       publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
@@ -111,11 +111,11 @@ Manajemen optimis dengan target pertumbuhan kredit 10-12% di 2025, didorong oleh
 - Penetrasi UMKM
 - Pertumbuhan wealth management`,
       coverImage: "/images/bca-stock.jpg",
-      category: "SAHAM",
+      category: ArticleCategory.SAHAM,
       tags: ["BBCA", "Perbankan", "Laporan Keuangan", "Dividen"],
       author: "Siti Rahayu",
       authorImage: "/images/authors/siti.jpg",
-      status: "PUBLISHED",
+      status: ArticleStatus.PUBLISHED,
       isPremium: false,
       views: 892,
       publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
@@ -174,11 +174,11 @@ Tools yang perlu dikuasai:
 
 Mulai dengan akun demo dulu untuk latihan sebelum trading dengan uang sungguhan.`,
       coverImage: "/images/stock-education.jpg",
-      category: "EDUKASI",
+      category: ArticleCategory.EDUKASI,
       tags: ["Trading", "Saham", "Pemula", "Investasi", "Edukasi"],
       author: "Ahmad Wijaya",
       authorImage: "/images/authors/ahmad.jpg",
-      status: "PUBLISHED",
+      status: ArticleStatus.PUBLISHED,
       isPremium: false,
       views: 2156,
       publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
@@ -251,11 +251,11 @@ Bullish strategy dengan risiko terbatas.
 
 Strategi ini memerlukan pemahaman mendalam tentang options. Praktikkan di paper trading terlebih dahulu.`,
       coverImage: "/images/options-trading.jpg",
-      category: "ANALISIS",
+      category: ArticleCategory.ANALISIS,
       tags: ["Options", "Trading", "Advanced", "Strategi", "Premium"],
       author: "Dr. Financial Expert",
       authorImage: "/images/authors/expert.jpg",
-      status: "PUBLISHED",
+      status: ArticleStatus.PUBLISHED,
       isPremium: true, // Premium content
       views: 445,
       publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
@@ -315,11 +315,11 @@ Exchange yang tidak comply akan diblokir akses.
 3. Diversifikasi ke beberapa exchange
 4. Stay updated dengan perkembangan regulasi`,
       coverImage: "/images/regulation.jpg",
-      category: "REGULASI",
+      category: ArticleCategory.REGULASI,
       tags: ["OJK", "Regulasi", "Cryptocurrency", "Bappebti", "Compliance"],
       author: "Legal Analyst Team",
       authorImage: "/images/authors/team.jpg",
-      status: "PUBLISHED",
+      status: ArticleStatus.PUBLISHED,
       isPremium: false,
       views: 1234,
       publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 hours ago
@@ -342,25 +342,25 @@ Exchange yang tidak comply akan diblokir akses.
       {
         userId: regularUser.id,
         symbol: "BBCA",
-        assetType: "SAHAM",
+        assetType: AssetType.SAHAM,
         name: "Bank Central Asia",
       },
       {
         userId: regularUser.id,
         symbol: "BBRI",
-        assetType: "SAHAM",
+        assetType: AssetType.SAHAM,
         name: "Bank Rakyat Indonesia",
       },
       {
         userId: regularUser.id,
         symbol: "BTC",
-        assetType: "KRIPTO",
+        assetType: AssetType.KRIPTO,
         name: "Bitcoin",
       },
       {
         userId: premiumUser.id,
         symbol: "ETH",
-        assetType: "KRIPTO",
+        assetType: AssetType.KRIPTO,
         name: "Ethereum",
       },
     ],
@@ -375,7 +375,7 @@ Exchange yang tidak comply akan diblokir akses.
       {
         userId: premiumUser.id,
         symbol: "BBCA",
-        assetType: "SAHAM",
+        assetType: AssetType.SAHAM,
         name: "Bank Central Asia",
         quantity: 100,
         buyPrice: 9500,
@@ -385,7 +385,7 @@ Exchange yang tidak comply akan diblokir akses.
       {
         userId: premiumUser.id,
         symbol: "BTC",
-        assetType: "KRIPTO",
+        assetType: AssetType.KRIPTO,
         name: "Bitcoin",
         quantity: 0.5,
         buyPrice: 600000000,
