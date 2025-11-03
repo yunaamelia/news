@@ -148,29 +148,29 @@ const topCryptos = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
-      {/* Hero Section - Modern with gradient animation */}
-      <section className="relative overflow-hidden bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 pt-32 pb-32 text-white">
+      {/* Hero Section - Bold crypto-themed */}
+      <section className="relative overflow-hidden bg-linear-to-br from-[#0a0e27] via-[#121b3a] to-[#0a0e27] pt-32 pb-32 text-white">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 h-[500px] w-[500px] animate-pulse rounded-full bg-blue-600 opacity-40 mix-blend-multiply blur-[120px] filter"></div>
-          <div className="absolute top-40 right-10 h-[600px] w-[600px] animate-pulse rounded-full bg-purple-600 opacity-40 mix-blend-multiply blur-[120px] filter delay-500"></div>
-          <div className="absolute bottom-20 left-1/3 h-[550px] w-[550px] animate-pulse rounded-full bg-pink-600 opacity-30 mix-blend-multiply blur-[120px] filter delay-700"></div>
+          <div className="absolute top-20 left-10 h-[500px] w-[500px] animate-pulse rounded-full bg-blue-600 opacity-40 mix-blend-multiply blur-[128px]"></div>
+          <div className="absolute top-40 right-10 h-[600px] w-[600px] animate-pulse rounded-full bg-purple-600 opacity-40 mix-blend-multiply blur-[128px]"></div>
+          <div className="absolute bottom-20 left-1/3 h-[550px] w-[550px] animate-pulse rounded-full bg-cyan-600 opacity-30 mix-blend-multiply blur-[128px]"></div>
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {/* Badge */}
-            <div className="glass-card animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 shadow-xl shadow-blue-500/20">
+            <div className="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 shadow-xl shadow-blue-500/20 backdrop-blur-sm">
               <FiZap className="h-5 w-5 animate-pulse text-yellow-400" />
-              <span className="gradient-text text-sm font-semibold">
+              <span className="gradient-text-crypto text-sm font-semibold">
                 Platform #1 untuk Investor Indonesia
               </span>
             </div>
 
             {/* Main heading with massive gradient text */}
             <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.1] font-black tracking-tight md:text-8xl lg:text-9xl">
-              <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">
+              <span className="bg-linear-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">
                 Berita & Data
               </span>
               <br />
@@ -179,34 +179,34 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="animation-delay-200 animate-fade-in-up mx-auto mb-14 max-w-4xl text-xl leading-relaxed font-light text-gray-400 md:text-2xl">
+            <p className="animation-delay-200 animate-fade-in-up mx-auto mb-14 max-w-4xl text-xl leading-relaxed text-gray-300 md:text-2xl">
               Platform terlengkap untuk investor dan trader Indonesia. Dapatkan
               berita real-time, analisis mendalam, dan data pasar saham & kripto
               dalam satu tempat.
             </p>
 
-            {/* CTA Buttons with improved styling */}
+            {/* CTA Buttons */}
             <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
               <Link
                 href="/auth/signup"
-                className="group hover:shadow-3xl relative inline-flex items-center justify-center gap-3 rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 px-10 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-purple-500/40"
+                className="group bg-gradient-crypto relative inline-flex items-center justify-center gap-3 rounded-xl px-10 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-purple-500/40"
               >
                 <span>Mulai Gratis</span>
                 <FiArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-2" />
               </Link>
               <Link
                 href="/premium"
-                className="group glass-card inline-flex items-center justify-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-lg font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-500/20"
+                className="group inline-flex items-center justify-center gap-3 rounded-xl border border-white/20 bg-white/5 px-10 py-5 text-lg font-bold text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-yellow-400 hover:bg-white/10 hover:shadow-xl hover:shadow-yellow-500/20"
               >
                 <FiStar className="h-6 w-6 text-yellow-400 transition-transform group-hover:rotate-12" />
                 <span>Lihat Premium</span>
               </Link>
             </div>
 
-            {/* Stats with stagger animation */}
+            {/* Stats */}
             <div className="animation-delay-500 animate-fade-in-up mx-auto grid max-w-3xl grid-cols-3 gap-12 border-t border-white/10 pt-12">
               <div className="group text-center transition-transform duration-300 hover:scale-110">
-                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                <div className="gradient-text-crypto mb-2 text-4xl font-black md:text-5xl">
                   10K+
                 </div>
                 <div className="text-sm font-medium text-gray-400">
@@ -214,7 +214,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="group text-center transition-transform duration-300 hover:scale-110">
-                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                <div className="gradient-text-crypto mb-2 text-4xl font-black md:text-5xl">
                   500+
                 </div>
                 <div className="text-sm font-medium text-gray-400">
@@ -222,7 +222,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="group text-center transition-transform duration-300 hover:scale-110">
-                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                <div className="gradient-text-crypto mb-2 text-4xl font-black md:text-5xl">
                   24/7
                 </div>
                 <div className="text-sm font-medium text-gray-400">
