@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -15,36 +16,19 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: {
-      status: string;
-      publishedAt: { lte: Date };
-      category?: string;
-      isPremium?: boolean;
-      OR?: Array<{
-        title?: { contains: string; mode: string };
-        content?: { contains: string; mode: string };
-        tags?: { has: string };
-      }>;
-    } = {
+    const where: Prisma.ArticleWhereInput = {
       status: "PUBLISHED",
       publishedAt: { lte: new Date() },
+      ...(category && { category: category as Prisma.ArticleWhereInput["category"] }),
+      ...(isPremium !== null && { isPremium }),
+      ...(search && {
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { content: { contains: search, mode: "insensitive" } },
+          { tags: { has: search } },
+        ],
+      }),
     };
-
-    if (category) {
-      where.category = category;
-    }
-
-    if (isPremium !== null) {
-      where.isPremium = isPremium;
-    }
-
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { content: { contains: search, mode: "insensitive" } },
-        { tags: { has: search } },
-      ];
-    }
 
     // Get total count
     const total = await prisma.article.count({ where });
