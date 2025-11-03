@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         );
       } else {
         // Default Indonesian stocks
-        const defaultStocks = ["BBCA", "BBRI", "BMRI", "TLKM", "ASII"];
+        const defaultStocks = ["BBCA", "BBRI", "TLKM", "ASII", "UNVR"];
         result.stocks = await Promise.all(
           defaultStocks.map((symbol) => getMarketData(symbol, "SAHAM"))
         );
@@ -34,12 +34,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (type === "crypto" || type === "all") {
-      // Get cryptocurrency data
+      // Get crypto data
       const cryptoSymbols = symbols.filter(
-        (s) => s.includes("USDT") || s.includes("BTC") || s.includes("ETH")
+        (s) => s.includes("USDT") || s.includes("BTC") || s.includes("-")
       );
       if (cryptoSymbols.length > 0) {
-        result.cryptos = await Promise.all(
+        result.crypto = await Promise.all(
           cryptoSymbols.map((symbol) => getCryptoData(symbol))
         );
       } else {
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
           "ripple",
           "cardano",
         ];
-        result.cryptos = await Promise.all(
+        result.crypto = await Promise.all(
           defaultCryptos.map((id) => getCryptoData(id))
         );
       }

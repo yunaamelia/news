@@ -216,7 +216,7 @@ export default function Home() {
       <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-6">Berita Utama</h2>
-          <ArticleCard article={featuredArticle} featured />
+          <ArticleCard article={featuredArticle} />
         </div>
       </section>
 
@@ -246,13 +246,15 @@ export default function Home() {
                 {topStocks.map((stock) => (
                   <MarketCard
                     key={stock.symbol}
-                    symbol={stock.symbol}
-                    name={stock.name}
-                    price={stock.price}
-                    change={stock.change}
-                    changePercent={stock.changePercent}
-                    volume={stock.volume}
-                    type="stock"
+                    data={{
+                      symbol: stock.symbol,
+                      name: stock.name,
+                      price: stock.price,
+                      change24h: stock.change,
+                      changePercent: stock.changePercent,
+                      volume: stock.volume,
+                      lastUpdated: new Date().toISOString(),
+                    }}
                   />
                 ))}
               </div>
@@ -270,13 +272,15 @@ export default function Home() {
                 {topCryptos.map((crypto) => (
                   <MarketCard
                     key={crypto.symbol}
-                    symbol={crypto.symbol}
-                    name={crypto.name}
-                    price={crypto.price}
-                    change={crypto.change}
-                    changePercent={crypto.changePercent}
-                    type="crypto"
-                    image={crypto.image}
+                    data={{
+                      symbol: crypto.symbol,
+                      name: crypto.name,
+                      price: crypto.price,
+                      change24h: crypto.change,
+                      changePercent: crypto.changePercent,
+                      volume: 0,
+                      lastUpdated: new Date().toISOString(),
+                    }}
                   />
                 ))}
               </div>

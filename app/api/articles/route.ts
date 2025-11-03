@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       publishedAt: { lte: Date };
       category?: string;
       isPremium?: boolean;
-      OR?: { title?: { contains: string; mode: string }; content?: { contains: string; mode: string } }[];
+      OR?: unknown[];
     } = {
       status: "PUBLISHED",
       publishedAt: { lte: new Date() },
