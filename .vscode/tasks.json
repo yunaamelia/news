@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "shell",
+      "command": "npm run dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "npm run build",
+      "problemMatcher": ["$tsc"],
+      "group": "build"
+    },
+    {
+      "label": "prisma:generate",
+      "type": "shell",
+      "command": "npx prisma generate",
+      "problemMatcher": []
+    },
+    {
+      "label": "prisma:push",
+      "type": "shell",
+      "command": "npx prisma db push",
+      "problemMatcher": []
+    },
+    {
+      "label": "prisma:studio",
+      "type": "shell",
+      "command": "npx prisma studio",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "prisma:format",
+      "type": "shell",
+      "command": "npx prisma format",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint",
+      "type": "shell",
+      "command": "npm run lint",
+      "problemMatcher": ["$eslint-stylish"]
+    }
+  ]
+}
