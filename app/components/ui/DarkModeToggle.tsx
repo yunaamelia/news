@@ -5,8 +5,12 @@ import { FiMoon, FiSun } from "react-icons/fi";
 
 export default function DarkModeToggle() {
   const [darkMode, setDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Set mounted state
+    setMounted(true);
+    
     // Check for saved preference or system preference
     const isDark =
       localStorage.getItem("darkMode") === "true" ||
@@ -32,10 +36,6 @@ export default function DarkModeToggle() {
       document.documentElement.classList.remove("dark");
     }
   };
-
-  // Only render on client-side to avoid hydration mismatch
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   if (!mounted) {
     return (
