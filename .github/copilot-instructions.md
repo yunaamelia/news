@@ -183,3 +183,90 @@ Let me create a summary document of all changes...
 5. Report briefly: "✅ All checks passed" or show specific errors
 
 **Remember:** Users value efficiency over verbosity. Let the code speak.
+
+## 🚨 CRITICAL: Pre-Push Validation Workflow (HIGH PRIORITY)
+
+**⚠️ MANDATORY BEFORE EVERY `git push`:**
+
+This workflow is **NON-NEGOTIABLE** and must be executed in order for **ALL** code changes:
+
+### Validation Pipeline (Required Steps):
+
+```bash
+# 1. ESLint Check
+npm run lint
+# ✅ Must pass with 0 errors (warnings acceptable if minor)
+# ❌ Fix all errors before proceeding
+
+# 2. TypeScript Type Check  
+npx tsc --noEmit
+# ✅ Must pass with 0 type errors
+# ❌ Fix all type errors before proceeding
+
+# 3. Production Build Test
+npm run build
+# ✅ Must compile successfully
+# ❌ Fix build errors before proceeding
+
+# 4. Security Audit (Optional - can have warnings)
+npm audit --production --audit-level=moderate
+# ⚠️ Note: Can proceed with low severity warnings
+# ❌ Critical/High vulnerabilities should be addressed
+
+# 5. Only after ALL checks pass:
+git add -A
+git commit -m "feat: descriptive message"
+git push
+```
+
+### Why This Matters:
+
+- **Prevents CI Failures:** GitHub Actions will run these same checks
+- **Maintains Code Quality:** Catches errors before they reach production
+- **Saves Time:** Local validation is faster than waiting for CI to fail
+- **Team Efficiency:** Clean main branch = happy developers
+
+### Common Validation Errors & Fixes:
+
+**ESLint Errors:**
+- Unused imports: Remove them
+- Unused variables: Use them or prefix with `_`
+- Missing dependencies: Add to useEffect deps array
+
+**TypeScript Errors:**
+- Type mismatches: Add proper type annotations
+- Enum assignments: Use `ArticleCategory.SAHAM` not `"SAHAM"`
+- Missing props: Add required props or make optional with `?`
+
+**Build Errors:**
+- Import errors: Check file paths and exports
+- Module not found: Verify package.json dependencies
+- Type errors: Same as TypeScript check above
+
+### Agent Behavior:
+
+**When validation fails:**
+1. Show specific error messages
+2. Fix errors immediately
+3. Re-run validation
+4. Only push when all checks pass
+
+**When validation passes:**
+```
+✅ ESLint: Pass
+✅ TypeScript: Pass  
+✅ Build: Pass
+✅ Pushed (commit abc123)
+```
+
+### Never Skip This:
+
+❌ **NEVER** push code that hasn't passed all validations
+❌ **NEVER** commit with `--no-verify` to bypass checks
+❌ **NEVER** push with the mentality "CI will catch it"
+
+✅ **ALWAYS** run full validation pipeline
+✅ **ALWAYS** fix errors locally first
+✅ **ALWAYS** ensure clean commits
+
+**This is the #1 priority rule for maintaining codebase quality.**
