@@ -43,7 +43,7 @@ export default function NewsletterSubscribe() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
+    <div className="bg-linear-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
       <div className="flex items-center space-x-3 mb-4">
         <FiMail className="w-8 h-8" />
         <h3 className="text-2xl font-bold">Newsletter</h3>

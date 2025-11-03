@@ -37,7 +37,7 @@ export default async function KriptoPage() {
   const articles = await getArticles();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white pt-24 pb-16">
+    <div className="min-h-screen bg-linear-to-b from-purple-50 to-white pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Section */}
         <div className="mb-12 text-center">

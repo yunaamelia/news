@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PremiumPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-16">
         {/* Header */}
         <div className="text-center mb-16">
@@ -71,7 +71,7 @@ export default function PremiumPage() {
           </div>
 
           {/* Premium Plan - Most Popular */}
-          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 border-4 border-yellow-400 relative transform scale-105">
+          <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-2xl p-8 border-4 border-yellow-400 relative transform scale-105">
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-bold">
               PALING POPULER
             </div>

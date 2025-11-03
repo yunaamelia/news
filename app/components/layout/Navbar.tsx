@@ -42,11 +42,11 @@ export default function Navbar() {
             href="/"
             className="flex items-center gap-3 group"
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 bg-linear-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
               <FiTrendingUp className="w-6 h-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 BeritaFinansial
               </span>
               <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">
@@ -91,7 +91,7 @@ export default function Navbar() {
             >
               <FiStar className="w-4 h-4" />
               <span className="font-medium">Premium</span>
-              <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full font-semibold">
+              <span className="text-xs px-2 py-0.5 bg-linear-to-r from-yellow-400 to-orange-400 text-white rounded-full font-semibold">
                 NEW
               </span>
             </Link>
@@ -115,7 +115,7 @@ export default function Navbar() {
 
             <Link
               href="/auth/signup"
-              className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+              className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
             >
               <span>Daftar Gratis</span>
             </Link>
@@ -178,7 +178,7 @@ export default function Navbar() {
             >
               <FiStar className="w-5 h-5 text-yellow-600" />
               <span className="font-medium">Premium</span>
-              <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full font-semibold">
+              <span className="text-xs px-2 py-0.5 bg-linear-to-r from-yellow-400 to-orange-400 text-white rounded-full font-semibold">
                 NEW
               </span>
             </Link>
@@ -194,7 +194,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/auth/signup"
-                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold transition-all"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold transition-all"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span>Daftar Gratis</span>
