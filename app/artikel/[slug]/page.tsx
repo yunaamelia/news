@@ -12,24 +12,27 @@ import {
 import prisma from "@/app/lib/prisma";
 
 export const revalidate = 300; // ISR: revalidate every 5 minutes
+export const dynamic = "force-dynamic"; // Always render dynamically
 export const dynamicParams = true; // Generate pages on-demand
 
-export async function generateStaticParams() {
-  try {
-    const articles = await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      select: { slug: true },
-      take: 20,
-    });
+// Disabled generateStaticParams to prevent build-time database connections
+// Pages will be generated on-demand instead
+// export async function generateStaticParams() {
+//   try {
+//     const articles = await prisma.article.findMany({
+//       where: { status: "PUBLISHED" },
+//       select: { slug: true },
+//       take: 20,
+//     });
 
-    return articles.map((article) => ({
-      slug: article.slug,
-    }));
-  } catch (error) {
-    console.error("Error in generateStaticParams:", error);
-    return [];
-  }
-}
+//     return articles.map((article) => ({
+//       slug: article.slug,
+//     }));
+//   } catch (error) {
+//     console.error("Error in generateStaticParams:", error);
+//     return [];
+//   }
+// }
 
 async function getArticle(slug: string) {
   return await prisma.article.findUnique({
