@@ -16,7 +16,49 @@ export async function GET() {
       orderBy: { buyDate: "desc" },
     });
 
-    return NextResponse.json(portfolios);
+    // Calculate stats and P&L
+    let totalInvestment = 0;
+    let currentValue = 0;
+
+    const portfolioWithPnL = portfolios.map((item) => {
+      const investment = item.quantity * item.buyPrice;
+      totalInvestment += investment;
+
+      // Mock current price (in production, fetch from market API)
+      const currentPrice = item.buyPrice * (1 + (Math.random() * 0.2 - 0.1));
+      const itemValue = item.quantity * currentPrice;
+      currentValue += itemValue;
+
+      const profitLoss = itemValue - investment;
+      const profitLossPercent = (profitLoss / investment) * 100;
+
+      return {
+        id: item.id,
+        symbol: item.symbol,
+        name: item.name,
+        assetType: item.assetType,
+        quantity: item.quantity,
+        buyPrice: item.buyPrice,
+        currentPrice,
+        totalValue: itemValue,
+        profitLoss,
+        profitLossPercent,
+        purchaseDate: item.buyDate.toISOString(),
+      };
+    });
+
+    const totalProfitLoss = currentValue - totalInvestment;
+    const totalProfitLossPercent =
+      totalInvestment > 0 ? (totalProfitLoss / totalInvestment) * 100 : 0;
+
+    const stats = {
+      totalInvestment,
+      currentValue,
+      totalProfitLoss,
+      totalProfitLossPercent,
+    };
+
+    return NextResponse.json({ portfolio: portfolioWithPnL, stats });
   } catch (error) {
     console.error("Error fetching portfolio:", error);
     return NextResponse.json(
@@ -34,7 +76,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { symbol, assetType, name, quantity, buyPrice, buyDate, notes } =
+    const { symbol, assetType, name, quantity, buyPrice, purchaseDate, notes } =
       await req.json();
 
     const portfolio = await prisma.portfolio.create({
@@ -45,8 +87,8 @@ export async function POST(req: NextRequest) {
         name,
         quantity: parseFloat(quantity),
         buyPrice: parseFloat(buyPrice),
-        buyDate: new Date(buyDate),
-        notes,
+        buyDate: new Date(purchaseDate),
+        notes: notes || null,
       },
     });
 

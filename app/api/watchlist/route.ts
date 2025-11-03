@@ -16,7 +16,7 @@ export async function GET() {
       orderBy: { addedAt: "desc" },
     });
 
-    return NextResponse.json(watchlists);
+    return NextResponse.json({ watchlist: watchlists });
   } catch (error) {
     console.error("Error fetching watchlist:", error);
     return NextResponse.json(
