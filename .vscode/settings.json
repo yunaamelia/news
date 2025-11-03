@@ -4,12 +4,22 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "explicit",
+    "source.sortImports": "never"
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.wordWrap": "on",
   "editor.inlineSuggest.enabled": true,
+  "editor.suggestSelection": "first",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.minimap.enabled": false,
+  "editor.linkedEditing": true,
+  "editor.snippetSuggestions": "top",
 
   // Prettier
   "prettier.semi": true,
@@ -17,6 +27,8 @@
   "prettier.trailingComma": "es5",
   "prettier.printWidth": 80,
   "prettier.tabWidth": 2,
+  "prettier.arrowParens": "always",
+  "prettier.endOfLine": "lf",
 
   // ESLint
   "eslint.validate": [
@@ -25,11 +37,23 @@
     "typescript",
     "typescriptreact"
   ],
+  "eslint.format.enable": false,
+  "eslint.lintTask.enable": true,
+  "eslint.run": "onType",
 
   // TypeScript
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.variableTypes.enabled": true,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
 
   // Files
   "files.exclude": {
@@ -89,6 +113,19 @@
     "typescript": "javascript",
     "typescriptreact": "javascript"
   },
+  "tailwindCSS.emmetCompletions": true,
+  "tailwindCSS.validate": true,
+  "tailwindCSS.colorDecorators": true,
+  "tailwindCSS.showPixelEquivalents": true,
+
+  // Emmet
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html",
+    "javascript": "html",
+    "javascriptreact": "html"
+  },
+  "emmet.triggerExpansionOnTab": true,
 
   // Git
   "git.confirmSync": false,
@@ -114,8 +151,53 @@
     "markdown": true,
     "prisma": true
   },
+  "github.copilot.editor.enableAutoCompletions": true,
+
+  // IntelliCode
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+
+  // Code Runner
+  "code-runner.executorMap": {
+    "typescript": "npx tsx",
+    "javascript": "node"
+  },
+  "code-runner.runInTerminal": true,
+  "code-runner.clearPreviousOutput": true,
+
+  // npm IntelliSense
+  "npm-intellisense.importES6": true,
+  "npm-intellisense.importQuotes": "\"",
+  "npm-intellisense.importLinebreak": ";\n",
+  "npm-intellisense.scanDevDependencies": true,
 
   // Terminal
   "terminal.integrated.defaultProfile.linux": "bash",
-  "terminal.integrated.fontFamily": "monospace"
+  "terminal.integrated.fontFamily": "monospace",
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.cursorBlinking": true,
+
+  // Breadcrumbs
+  "breadcrumbs.enabled": true,
+  "breadcrumbs.symbolPath": "on",
+
+  // Explorer
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml",
+    "tsconfig.json": "tsconfig.*.json",
+    "next.config.*": "next-env.d.ts",
+    ".env": ".env.*",
+    "README.md": "GETTING_STARTED.md, SETUP.md, DEPLOYMENT.md, PROJECT_SUMMARY.md, COMMANDS.md"
+  },
+
+  // Auto Save
+  "files.autoSave": "onFocusChange",
+
+  // Problems
+  "problems.decorations.enabled": true,
+
+  // Window
+  "window.zoomLevel": 0
 }
