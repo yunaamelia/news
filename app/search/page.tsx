@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { FiSearch, FiFilter, FiX } from "react-icons/fi";
-import ArticleCard from "../components/articles/ArticleCard";
 import { ArticleCategory } from "@prisma/client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { FiFilter, FiSearch, FiX } from "react-icons/fi";
+import ArticleCard from "../components/articles/ArticleCard";
 
 interface Article {
   id: string;
@@ -31,7 +31,7 @@ export default function SearchPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  
+
   const [filters, setFilters] = useState({
     category: searchParams.get("category") || "",
     sortBy: searchParams.get("sortBy") || "relevance",
@@ -123,11 +123,11 @@ export default function SearchPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-12 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
             Cari Artikel
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -138,13 +138,13 @@ export default function SearchPage() {
         {/* Search Box */}
         <div className="mb-6">
           <div className="relative max-w-2xl">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <FiSearch className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Cari judul, konten, atau tag artikel..."
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-xl border border-gray-300 bg-white py-4 pr-4 pl-12 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
             />
           </div>
         </div>
@@ -153,24 +153,26 @@ export default function SearchPage() {
         <div className="mb-8">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 transition-all hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
           >
-            <FiFilter className="w-4 h-4" />
+            <FiFilter className="h-4 w-4" />
             <span>Filter & Urutkan</span>
           </button>
 
           {showFilters && (
-            <div className="mt-4 p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-300 dark:border-gray-700">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="mt-4 rounded-xl border border-gray-300 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 {/* Category Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Kategori
                   </label>
                   <select
                     value={filters.category}
-                    onChange={(e) => handleFilterChange("category", e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    onChange={(e) =>
+                      handleFilterChange("category", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
                     {categories.map((cat) => (
                       <option key={cat.value} value={cat.value}>
@@ -182,13 +184,15 @@ export default function SearchPage() {
 
                 {/* Sort Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Urutkan
                   </label>
                   <select
                     value={filters.sortBy}
-                    onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    onChange={(e) =>
+                      handleFilterChange("sortBy", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
                     {sortOptions.map((sort) => (
                       <option key={sort.value} value={sort.value}>
@@ -200,13 +204,15 @@ export default function SearchPage() {
 
                 {/* Premium Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Tipe Artikel
                   </label>
                   <select
                     value={filters.premium}
-                    onChange={(e) => handleFilterChange("premium", e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                    onChange={(e) =>
+                      handleFilterChange("premium", e.target.value)
+                    }
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
                   >
                     <option value="">Semua Artikel</option>
                     <option value="false">Gratis</option>
@@ -215,12 +221,12 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex justify-between items-center">
+              <div className="mt-4 flex items-center justify-between">
                 <button
                   onClick={clearFilters}
-                  className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                  className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
-                  <FiX className="w-4 h-4" />
+                  <FiX className="h-4 w-4" />
                   <span>Hapus Filter</span>
                 </button>
                 <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -233,17 +239,17 @@ export default function SearchPage() {
 
         {/* Results */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="h-96 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse"
+                className="h-96 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800"
               />
             ))}
           </div>
         ) : articles.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {articles.map((article) => (
                 <ArticleCard key={article.id} article={article} />
               ))}
@@ -255,11 +261,13 @@ export default function SearchPage() {
                 {[...Array(pagination.totalPages)].map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setPagination((prev) => ({ ...prev, page: i + 1 }))}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    onClick={() =>
+                      setPagination((prev) => ({ ...prev, page: i + 1 }))
+                    }
+                    className={`rounded-lg px-4 py-2 font-medium transition-all ${
                       pagination.page === i + 1
                         ? "bg-blue-600 text-white"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
                   >
                     {i + 1}
@@ -269,11 +277,11 @@ export default function SearchPage() {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <p className="text-xl text-gray-600 dark:text-gray-400">
               Tidak ada artikel yang ditemukan
             </p>
-            <p className="text-gray-500 dark:text-gray-500 mt-2">
+            <p className="mt-2 text-gray-500 dark:text-gray-500">
               Coba ubah kata kunci atau filter pencarian Anda
             </p>
           </div>

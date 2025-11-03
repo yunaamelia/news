@@ -1,14 +1,14 @@
 import Link from "next/link";
 import {
-  FiTrendingUp,
   FiActivity,
-  FiBook,
-  FiBarChart2,
-  FiZap,
-  FiShield,
-  FiClock,
   FiArrowRight,
+  FiBarChart2,
+  FiBook,
+  FiClock,
+  FiShield,
   FiStar,
+  FiTrendingUp,
+  FiZap,
 } from "react-icons/fi";
 import ArticleCard from "./components/articles/ArticleCard";
 import MarketCard from "./components/market/MarketCard";
@@ -149,69 +149,85 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
       {/* Hero Section - Modern with gradient animation */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-600 via-blue-700 to-purple-800 text-white pt-32 pb-24">
+      <section className="relative overflow-hidden bg-linear-to-br from-gray-950 via-gray-900 to-gray-950 pt-32 pb-32 text-white">
         {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-75"></div>
-          <div className="absolute bottom-20 left-1/3 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-150"></div>
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 h-[500px] w-[500px] animate-pulse rounded-full bg-blue-600 opacity-40 mix-blend-multiply blur-[120px] filter"></div>
+          <div className="absolute top-40 right-10 h-[600px] w-[600px] animate-pulse rounded-full bg-purple-600 opacity-40 mix-blend-multiply blur-[120px] filter delay-500"></div>
+          <div className="absolute bottom-20 left-1/3 h-[550px] w-[550px] animate-pulse rounded-full bg-pink-600 opacity-30 mix-blend-multiply blur-[120px] filter delay-700"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-              <FiZap className="w-4 h-4 text-yellow-300" />
-              <span className="text-sm font-medium">Platform #1 untuk Investor Indonesia</span>
+            <div className="glass-card animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 px-6 py-3 shadow-xl shadow-blue-500/20">
+              <FiZap className="h-5 w-5 animate-pulse text-yellow-400" />
+              <span className="gradient-text text-sm font-semibold">
+                Platform #1 untuk Investor Indonesia
+              </span>
             </div>
 
-            {/* Main heading with gradient text */}
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="bg-linear-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
-                Berita & Data Finansial
+            {/* Main heading with massive gradient text */}
+            <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.1] font-black tracking-tight md:text-8xl lg:text-9xl">
+              <span className="bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-2xl">
+                Berita & Data
               </span>
               <br />
-              <span className="text-white">Terpercaya</span>
+              <span className="bg-linear-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                Finansial Terpercaya
+              </span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="animation-delay-200 animate-fade-in-up mx-auto mb-14 max-w-4xl text-xl leading-relaxed font-light text-gray-400 md:text-2xl">
               Platform terlengkap untuk investor dan trader Indonesia. Dapatkan
               berita real-time, analisis mendalam, dan data pasar saham & kripto
               dalam satu tempat.
             </p>
 
             {/* CTA Buttons with improved styling */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+            <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
               <Link
                 href="/auth/signup"
-                className="group relative inline-flex items-center justify-center gap-2 bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                className="group hover:shadow-3xl relative inline-flex items-center justify-center gap-3 rounded-2xl bg-linear-to-r from-blue-600 to-purple-600 px-10 py-5 text-lg font-bold text-white shadow-2xl shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-purple-500/40"
               >
                 <span>Mulai Gratis</span>
-                <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <FiArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-2" />
               </Link>
               <Link
                 href="/premium"
-                className="group inline-flex items-center justify-center gap-2 bg-transparent text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all border-2 border-white/30 backdrop-blur-sm"
+                className="group glass-card inline-flex items-center justify-center gap-3 rounded-2xl border border-white/20 px-10 py-5 text-lg font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:border-purple-400 hover:shadow-xl hover:shadow-purple-500/20"
               >
-                <FiStar className="w-5 h-5" />
+                <FiStar className="h-6 w-6 text-yellow-400 transition-transform group-hover:rotate-12" />
                 <span>Lihat Premium</span>
               </Link>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto pt-8 border-t border-white/20">
-              <div>
-                <div className="text-3xl md:text-4xl font-bold">10K+</div>
-                <div className="text-blue-200 text-sm mt-1">Pengguna Aktif</div>
+            {/* Stats with stagger animation */}
+            <div className="animation-delay-500 animate-fade-in-up mx-auto grid max-w-3xl grid-cols-3 gap-12 border-t border-white/10 pt-12">
+              <div className="group text-center transition-transform duration-300 hover:scale-110">
+                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                  10K+
+                </div>
+                <div className="text-sm font-medium text-gray-400">
+                  Pengguna Aktif
+                </div>
               </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-bold">500+</div>
-                <div className="text-blue-200 text-sm mt-1">Artikel Premium</div>
+              <div className="group text-center transition-transform duration-300 hover:scale-110">
+                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                  500+
+                </div>
+                <div className="text-sm font-medium text-gray-400">
+                  Artikel Premium
+                </div>
               </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-bold">24/7</div>
-                <div className="text-blue-200 text-sm mt-1">Data Real-time</div>
+              <div className="group text-center transition-transform duration-300 hover:scale-110">
+                <div className="gradient-text mb-2 text-4xl font-black md:text-5xl">
+                  24/7
+                </div>
+                <div className="text-sm font-medium text-gray-400">
+                  Data Real-time
+                </div>
               </div>
             </div>
           </div>
@@ -219,77 +235,94 @@ export default function Home() {
 
         {/* Wave divider */}
         <div className="absolute bottom-0 left-0 w-full">
-          <svg className="fill-gray-50" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            className="fill-gray-50"
+            viewBox="0 0 1440 120"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,58.7C960,64,1056,64,1152,58.7C1248,53,1344,43,1392,37.3L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"></path>
           </svg>
         </div>
       </section>
 
       {/* Features Section - Modern cards with hover effects */}
-      <section className="py-20 bg-linear-to-b from-gray-50 to-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section className="relative bg-linear-to-b from-gray-50 to-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
               Kenapa Memilih BeritaFinansial?
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Platform all-in-one dengan fitur lengkap untuk mendukung keputusan investasi Anda
+            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+              Platform all-in-one dengan fitur lengkap untuk mendukung keputusan
+              investasi Anda
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Feature Card 1 */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:-translate-y-2">
-              <div className="absolute inset-0 bg-linear-to-br from-blue-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-blue-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
               <div className="relative">
-                <div className="bg-linear-to-br from-blue-500 to-blue-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FiBarChart2 className="w-7 h-7 text-white" />
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 transition-transform group-hover:scale-110">
+                  <FiBarChart2 className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-3 text-gray-900">Data Real-Time</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Pantau pergerakan harga saham dan kripto secara real-time dengan akurasi tinggi
+                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                  Data Real-Time
+                </h3>
+                <p className="leading-relaxed text-gray-600">
+                  Pantau pergerakan harga saham dan kripto secara real-time
+                  dengan akurasi tinggi
                 </p>
               </div>
             </div>
 
             {/* Feature Card 2 */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-green-200 hover:-translate-y-2">
-              <div className="absolute inset-0 bg-linear-to-br from-green-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-green-200 hover:shadow-2xl">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-green-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
               <div className="relative">
-                <div className="bg-linear-to-br from-green-500 to-green-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FiActivity className="w-7 h-7 text-white" />
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-green-500 to-green-600 transition-transform group-hover:scale-110">
+                  <FiActivity className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-3 text-gray-900">Analisis Expert</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Dapatkan insight dan analisis mendalam dari para ahli finansial berpengalaman
+                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                  Analisis Expert
+                </h3>
+                <p className="leading-relaxed text-gray-600">
+                  Dapatkan insight dan analisis mendalam dari para ahli
+                  finansial berpengalaman
                 </p>
               </div>
             </div>
 
             {/* Feature Card 3 */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-purple-200 hover:-translate-y-2">
-              <div className="absolute inset-0 bg-linear-to-br from-purple-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-purple-200 hover:shadow-2xl">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-purple-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
               <div className="relative">
-                <div className="bg-linear-to-br from-purple-500 to-purple-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FiBook className="w-7 h-7 text-white" />
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-purple-500 to-purple-600 transition-transform group-hover:scale-110">
+                  <FiBook className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-3 text-gray-900">Edukasi Lengkap</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Tingkatkan skill trading Anda dengan panduan lengkap dari pemula hingga mahir
+                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                  Edukasi Lengkap
+                </h3>
+                <p className="leading-relaxed text-gray-600">
+                  Tingkatkan skill trading Anda dengan panduan lengkap dari
+                  pemula hingga mahir
                 </p>
               </div>
             </div>
 
             {/* Feature Card 4 */}
-            <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-orange-200 hover:-translate-y-2">
-              <div className="absolute inset-0 bg-linear-to-br from-orange-50 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-2xl">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
               <div className="relative">
-                <div className="bg-linear-to-br from-orange-500 to-orange-600 w-14 h-14 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FiShield className="w-7 h-7 text-white" />
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-orange-500 to-orange-600 transition-transform group-hover:scale-110">
+                  <FiShield className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="font-bold text-xl mb-3 text-gray-900">100% Terpercaya</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Berita akurat dan terverifikasi dari sumber terpercaya tanpa bias
+                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                  100% Terpercaya
+                </h3>
+                <p className="leading-relaxed text-gray-600">
+                  Berita akurat dan terverifikasi dari sumber terpercaya tanpa
+                  bias
                 </p>
               </div>
             </div>
@@ -298,22 +331,24 @@ export default function Home() {
       </section>
 
       {/* Featured Article */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-8 flex items-center justify-between">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full bg-red-100 text-red-700 text-sm font-medium">
-                <FiClock className="w-4 h-4" />
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700">
+                <FiClock className="h-4 w-4" />
                 <span>Trending Now</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Berita Utama</h2>
+              <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
+                Berita Utama
+              </h2>
             </div>
             <Link
               href="/artikel"
-              className="hidden md:inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold group"
+              className="group hidden items-center gap-2 font-semibold text-blue-600 hover:text-blue-700 md:inline-flex"
             >
               <span>Lihat Semua</span>
-              <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
           <ArticleCard article={featuredArticle} />
@@ -321,40 +356,46 @@ export default function Home() {
       </section>
 
       {/* Market Overview - Glassmorphism design */}
-      <section className="py-20 bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden">
+      <section className="relative overflow-hidden bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 py-20">
         {/* Decorative background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-75"></div>
+        <div className="absolute top-0 right-0 h-96 w-96 animate-pulse rounded-full bg-blue-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+        <div className="absolute bottom-0 left-0 h-96 w-96 animate-pulse rounded-full bg-purple-300 opacity-20 mix-blend-multiply blur-3xl filter delay-75"></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 flex flex-col items-start justify-between md:flex-row md:items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Pasar Hari Ini</h2>
-              <p className="text-gray-600">Pantau pergerakan harga terkini dari pasar saham dan kripto</p>
+              <h2 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">
+                Pasar Hari Ini
+              </h2>
+              <p className="text-gray-600">
+                Pantau pergerakan harga terkini dari pasar saham dan kripto
+              </p>
             </div>
             <Link
               href="/market"
-              className="mt-4 md:mt-0 inline-flex items-center gap-2 px-6 py-3 bg-white rounded-xl shadow-md hover:shadow-lg transition-all font-semibold text-blue-600 hover:text-blue-700 group"
+              className="group mt-4 inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-blue-600 shadow-md transition-all hover:text-blue-700 hover:shadow-lg md:mt-0"
             >
               <span>Lihat Semua Pasar</span>
-              <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Saham Card */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/50 hover:shadow-2xl transition-all">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                    <FiTrendingUp className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600">
+                    <FiTrendingUp className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">Saham IDX</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Saham IDX
+                    </h3>
                     <p className="text-sm text-gray-600">Top Movers Today</p>
                   </div>
                 </div>
-                <span className="px-4 py-2 bg-blue-100 text-blue-800 rounded-lg text-sm font-semibold">
+                <span className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800">
                   IHSG +0.8%
                 </span>
               </div>
@@ -377,18 +418,20 @@ export default function Home() {
             </div>
 
             {/* Kripto Card */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl p-8 shadow-xl border border-white/50 hover:shadow-2xl transition-all">
-              <div className="flex items-center justify-between mb-6">
+            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl">
+              <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                    <FiActivity className="w-6 h-6 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-purple-500 to-purple-600">
+                    <FiActivity className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">Cryptocurrency</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Cryptocurrency
+                    </h3>
                     <p className="text-sm text-gray-600">Top Gainers 24h</p>
                   </div>
                 </div>
-                <span className="px-4 py-2 bg-purple-100 text-purple-800 rounded-lg text-sm font-semibold">
+                <span className="rounded-lg bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-800">
                   Market Cap $2.1T
                 </span>
               </div>
@@ -414,23 +457,27 @@ export default function Home() {
       </section>
 
       {/* Recent Articles */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-12 flex flex-col items-start justify-between md:flex-row md:items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Artikel Pilihan</h2>
-              <p className="text-gray-600">Baca artikel terbaru dari berbagai kategori finansial</p>
+              <h2 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">
+                Artikel Pilihan
+              </h2>
+              <p className="text-gray-600">
+                Baca artikel terbaru dari berbagai kategori finansial
+              </p>
             </div>
             <Link
               href="/artikel"
-              className="mt-4 md:mt-0 inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold group"
+              className="group mt-4 inline-flex items-center gap-2 font-semibold text-blue-600 hover:text-blue-700 md:mt-0"
             >
               <span>Jelajahi Semua Artikel</span>
-              <FiArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {recentArticles.map((article) => (
               <ArticleCard key={article.id} article={article} />
             ))}
@@ -439,24 +486,26 @@ export default function Home() {
       </section>
 
       {/* CTA Section - Modern with glassmorphism */}
-      <section className="relative py-24 overflow-hidden">
+      <section className="relative overflow-hidden py-24">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-linear-to-br from-blue-600 via-purple-600 to-indigo-700"></div>
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
 
         {/* Animated blobs */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-75"></div>
+        <div className="absolute top-0 left-0 h-96 w-96 animate-pulse rounded-full bg-blue-400 opacity-30 mix-blend-multiply blur-3xl filter"></div>
+        <div className="absolute right-0 bottom-0 h-96 w-96 animate-pulse rounded-full bg-purple-400 opacity-30 mix-blend-multiply blur-3xl filter delay-75"></div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 md:p-16 border border-white/20 shadow-2xl">
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-white/20 bg-white/10 p-12 shadow-2xl backdrop-blur-xl md:p-16">
             <div className="text-center text-white">
-              <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
-                <FiStar className="w-4 h-4 text-yellow-300" />
-                <span className="text-sm font-medium">Lebih dari 10.000+ investor bergabung</span>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 backdrop-blur-sm">
+                <FiStar className="h-4 w-4 text-yellow-300" />
+                <span className="text-sm font-medium">
+                  Lebih dari 10.000+ investor bergabung
+                </span>
               </div>
 
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              <h2 className="mb-6 text-4xl leading-tight font-bold md:text-5xl">
                 Siap Meningkatkan Strategi
                 <br />
                 <span className="bg-linear-to-r from-yellow-200 to-yellow-400 bg-clip-text text-transparent">
@@ -464,29 +513,29 @@ export default function Home() {
                 </span>
               </h2>
 
-              <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-                Bergabunglah dengan komunitas investor cerdas yang sudah mempercayai
-                kami untuk mendapatkan informasi finansial terbaik.
+              <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-blue-100 md:text-2xl">
+                Bergabunglah dengan komunitas investor cerdas yang sudah
+                mempercayai kami untuk mendapatkan informasi finansial terbaik.
               </p>
 
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Link
                   href="/auth/signup"
-                  className="group inline-flex items-center justify-center gap-2 bg-white text-blue-600 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-blue-50 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                  className="group inline-flex transform items-center justify-center gap-2 rounded-2xl bg-white px-10 py-5 text-lg font-bold text-blue-600 shadow-xl transition-all hover:scale-105 hover:bg-blue-50 hover:shadow-2xl"
                 >
                   <span>Mulai Gratis Sekarang</span>
-                  <FiArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                  <FiArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/premium"
-                  className="group inline-flex items-center justify-center gap-2 bg-transparent text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all border-2 border-white/50 backdrop-blur-sm"
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-white/50 bg-transparent px-10 py-5 text-lg font-bold text-white backdrop-blur-sm transition-all hover:bg-white/10"
                 >
-                  <FiStar className="w-6 h-6" />
+                  <FiStar className="h-6 w-6" />
                   <span>Lihat Paket Premium</span>
                 </Link>
               </div>
 
-              <p className="mt-8 text-blue-200 text-sm">
+              <p className="mt-8 text-sm text-blue-200">
                 Tanpa kartu kredit • Setup 2 menit • Batalkan kapan saja
               </p>
             </div>

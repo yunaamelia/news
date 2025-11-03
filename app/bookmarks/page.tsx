@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import ArticleCard from "../components/articles/ArticleCard";
+import { useEffect, useState } from "react";
 import { FiBookmark, FiLoader } from "react-icons/fi";
+import ArticleCard from "../components/articles/ArticleCard";
 
 interface Article {
   id: string;
@@ -50,7 +50,7 @@ export default function BookmarksPage() {
     if (status === "authenticated") {
       fetchBookmarks();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, pagination.page]);
 
   const fetchBookmarks = async () => {
@@ -81,10 +81,10 @@ export default function BookmarksPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12">
+      <div className="min-h-screen bg-gray-50 pt-24 pb-12 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center py-20">
-            <FiLoader className="w-8 h-8 animate-spin text-blue-600" />
+            <FiLoader className="h-8 w-8 animate-spin text-blue-600" />
           </div>
         </div>
       </div>
@@ -96,13 +96,13 @@ export default function BookmarksPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24 pb-12">
+    <div className="min-h-screen bg-gray-50 pt-24 pb-12 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <FiBookmark className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+          <div className="mb-4 flex items-center gap-3">
+            <FiBookmark className="h-8 w-8 text-blue-600" />
+            <h1 className="text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
               Bookmark Saya
             </h1>
           </div>
@@ -114,12 +114,14 @@ export default function BookmarksPage() {
         {/* Bookmarks Grid */}
         {bookmarks.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {bookmarks.map((bookmark) => (
                 <ArticleCard
                   key={bookmark.id}
                   article={bookmark.article}
-                  onBookmarkRemoved={() => handleRemoveBookmark(bookmark.article.id)}
+                  onBookmarkRemoved={() =>
+                    handleRemoveBookmark(bookmark.article.id)
+                  }
                 />
               ))}
             </div>
@@ -130,11 +132,13 @@ export default function BookmarksPage() {
                 {[...Array(pagination.totalPages)].map((_, i) => (
                   <button
                     key={i}
-                    onClick={() => setPagination((prev) => ({ ...prev, page: i + 1 }))}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    onClick={() =>
+                      setPagination((prev) => ({ ...prev, page: i + 1 }))
+                    }
+                    className={`rounded-lg px-4 py-2 font-medium transition-all ${
                       pagination.page === i + 1
                         ? "bg-blue-600 text-white"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        : "bg-white text-gray-700 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
                     }`}
                   >
                     {i + 1}
@@ -144,17 +148,17 @@ export default function BookmarksPage() {
             )}
           </>
         ) : (
-          <div className="text-center py-20">
-            <FiBookmark className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="py-20 text-center">
+            <FiBookmark className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+            <h2 className="mb-2 text-2xl font-semibold text-gray-900 dark:text-white">
               Belum Ada Bookmark
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="mb-6 text-gray-600 dark:text-gray-400">
               Simpan artikel favorit Anda untuk dibaca nanti
             </p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+              className="rounded-lg bg-blue-600 px-6 py-3 text-white transition-all hover:bg-blue-700"
             >
               Jelajahi Artikel
             </button>

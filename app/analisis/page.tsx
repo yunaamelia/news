@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { FiArrowRight, FiClock, FiUser } from "react-icons/fi";
+import { FiArrowRight, FiBarChart2, FiClock, FiUser } from "react-icons/fi";
 
 export const metadata: Metadata = {
   title: "Analisis Pasar Finansial - BeritaFinansial",
@@ -37,66 +37,88 @@ export default async function AnalisIsPage() {
   const articles = await getArticles();
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-green-50 to-white pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            <span className="text-green-600">Analisis</span> Pasar
+    <div className="min-h-screen bg-gray-950 pt-24 pb-16">
+      <div className="fixed inset-0 -z-10 opacity-30">
+        <div className="absolute top-20 left-1/4 h-96 w-96 animate-pulse rounded-full bg-green-600 mix-blend-multiply blur-[120px] filter" />
+        <div className="absolute top-40 right-1/4 h-96 w-96 animate-pulse rounded-full bg-emerald-600 mix-blend-multiply blur-[120px] filter delay-500" />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="animate-fade-in-up mb-16 text-center">
+          <div className="glass-card mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/30 px-6 py-3 shadow-xl shadow-green-500/20">
+            <FiBarChart2 className="h-5 w-5 text-green-400" />
+            <span className="gradient-text text-sm font-bold">
+              Analisis Profesional
+            </span>
+          </div>
+          <h1 className="mb-6 text-6xl leading-tight font-black md:text-7xl lg:text-8xl">
+            <span className="bg-linear-to-r from-green-400 via-emerald-400 to-green-500 bg-clip-text text-transparent">
+              Analisis Pasar
+            </span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Dapatkan analisis mendalam dari para ahli untuk keputusan investasi yang
-            lebih baik
+          <p className="mx-auto max-w-4xl text-xl leading-relaxed font-light text-gray-400 md:text-2xl">
+            Dapatkan analisis mendalam dari para ahli untuk keputusan investasi
+            yang lebih baik
           </p>
         </div>
 
         {articles.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-            <p className="text-lg text-gray-600">
+          <div className="glass-card animate-fade-in rounded-2xl border border-green-500/30 p-16 text-center shadow-2xl">
+            <FiBarChart2 className="mx-auto mb-4 h-16 w-16 text-green-400" />
+            <p className="text-xl font-medium text-gray-400">
               Belum ada artikel untuk kategori ini
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {articles.map((article, index) => (
               <Link
                 key={article.id}
                 href={`/artikel/${article.slug}`}
-                className="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+                className="group glass-card animate-fade-in-up overflow-hidden rounded-2xl border border-green-500/20 transition-all duration-300 hover:scale-[1.02] hover:border-green-400/50 hover:shadow-2xl hover:shadow-green-500/10"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {article.imageUrl && (
-                  <div className="aspect-video bg-linear-to-br from-green-500 to-teal-600 relative overflow-hidden">
-                    <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-lg text-xs font-semibold">
+                  <div className="relative aspect-video overflow-hidden">
+                    <div className="absolute inset-0 bg-linear-to-br from-green-600 to-emerald-600" />
+                    <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/40 to-transparent opacity-60" />
+                    <div className="absolute top-4 left-4 rounded-full bg-linear-to-r from-green-600 to-emerald-600 px-4 py-1.5 text-xs font-bold text-white shadow-lg">
                       ANALISIS
                     </div>
                   </div>
                 )}
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors line-clamp-2">
+                  <h3 className="group-hover:gradient-text mb-3 line-clamp-2 text-xl font-bold text-white transition-all duration-300">
                     {article.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{article.excerpt}</p>
+                  <p className="mb-4 line-clamp-3 leading-relaxed text-gray-400">
+                    {article.excerpt}
+                  </p>
 
-                  <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between border-t border-white/10 pt-4 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
-                      <FiUser className="w-4 h-4" />
+                      <FiUser className="h-4 w-4" />
                       <span>{article.author?.name || "Admin"}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <FiClock className="w-4 h-4" />
+                      <FiClock className="h-4 w-4" />
                       <span>
-                        {new Date(article.publishedAt).toLocaleDateString("id-ID", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(article.publishedAt).toLocaleDateString(
+                          "id-ID",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          }
+                        )}
                       </span>
                     </div>
                   </div>
 
-                  <div className="mt-4 inline-flex items-center gap-2 text-green-600 font-semibold group-hover:gap-3 transition-all">
+                  <div className="mt-4 inline-flex items-center gap-2 font-bold text-green-400 transition-all duration-300 group-hover:gap-4">
                     <span>Baca Selengkapnya</span>
-                    <FiArrowRight className="w-5 h-5" />
+                    <FiArrowRight className="h-5 w-5" />
                   </div>
                 </div>
               </Link>
@@ -105,8 +127,8 @@ export default async function AnalisIsPage() {
         )}
 
         {articles.length >= 12 && (
-          <div className="text-center mt-12">
-            <button className="px-8 py-4 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-all shadow-lg hover:shadow-xl">
+          <div className="mt-16 text-center">
+            <button className="hover:shadow-3xl rounded-2xl bg-linear-to-r from-green-600 to-emerald-600 px-10 py-5 text-lg font-bold text-white shadow-2xl shadow-green-500/30 transition-all duration-300 hover:scale-105 hover:shadow-emerald-500/40">
               Muat Lebih Banyak
             </button>
           </div>
