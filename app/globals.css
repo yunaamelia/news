@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable dark mode variant */
+@variant dark (&:is(.dark *));
+
 /* Light mode (default) */
 :root {
   --background: #ffffff;
@@ -31,7 +34,8 @@
   --animate-gradient: gradient 8s linear infinite;
 
   @keyframes pulse-slow {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.2;
     }
     50% {
@@ -40,7 +44,8 @@
   }
 
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px);
     }
     50% {
