@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { FiArrowRight, FiBookOpen, FiClock, FiUser } from "react-icons/fi";
 
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
   description:
     "Panduan lengkap investasi saham dan kripto untuk pemula hingga advanced. Tutorial, tips, dan strategi trading yang terbukti efektif.",
 };
+
+export const revalidate = 300;
 
 interface Article {
   id: string;
@@ -20,15 +23,38 @@ interface Article {
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/api/articles?category=EDUKASI&limit=12`,
-      { next: { revalidate: 300 } }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.articles || [];
+    const articles = await prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        category: "EDUKASI",
+        publishedAt: { lte: new Date() },
+      },
+      orderBy: { publishedAt: "desc" },
+      take: 12,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        coverImage: true,
+        publishedAt: true,
+        author: true,
+      },
+    });
+
+    return articles.map((a) => ({
+      id: a.id,
+      title: a.title,
+      slug: a.slug,
+      excerpt: a.excerpt,
+      imageUrl: a.coverImage ?? null,
+      publishedAt: a.publishedAt?.toISOString() ?? new Date().toISOString(),
+      author: a.author ? { name: a.author } : null,
+    }));
   } catch (error) {
-    console.error("Error fetching articles:", error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Error fetching articles:", error);
+    }
     return [];
   }
 }

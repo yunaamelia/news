@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import ArticleCard from "./components/articles/ArticleCard";
 import MarketCard from "./components/market/MarketCard";
+import MarketTicker from "./components/market/MarketTicker";
 
 // Mock data untuk demo
 const featuredArticle = {
@@ -148,8 +149,73 @@ const topCryptos = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
+      {/* Market Ticker - Top Bar */}
+      <MarketTicker />
+
       {/* Hero Section - Bold crypto-themed */}
       <section className="relative overflow-hidden bg-linear-to-br from-[#0a0e27] via-[#121b3a] to-[#0a0e27] pt-32 pb-32 text-white">
+        {/* SVG Decorative Shapes */}
+        <div className="pointer-events-none absolute top-0 left-0 -z-10 opacity-50">
+          <svg
+            width="590"
+            height="666"
+            viewBox="0 0 590 666"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              opacity="0.4"
+              cx="333"
+              cy="333"
+              r="333"
+              fill="url(#paint0_linear)"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear"
+                x1="333"
+                y1="0"
+                x2="333"
+                y2="666"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#3E7DFF" stopOpacity="0.8" />
+                <stop offset="1" stopColor="#3E7DFF" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div className="pointer-events-none absolute top-20 right-0 -z-10 opacity-40">
+          <svg
+            width="443"
+            height="524"
+            viewBox="0 0 443 524"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              opacity="0.3"
+              cx="221.5"
+              cy="262"
+              r="262"
+              fill="url(#paint0_radial)"
+            />
+            <defs>
+              <radialGradient
+                id="paint0_radial"
+                cx="0"
+                cy="0"
+                r="1"
+                gradientUnits="userSpaceOnUse"
+                gradientTransform="translate(221.5 262) rotate(90) scale(262)"
+              >
+                <stop stopColor="#7C3AED" stopOpacity="0.6" />
+                <stop offset="1" stopColor="#7C3AED" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
         <div className="absolute inset-0">

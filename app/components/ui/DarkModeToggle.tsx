@@ -10,15 +10,20 @@ export default function DarkModeToggle() {
   // Initialize on mount using callback pattern to avoid setState in effect warning
   useEffect(() => {
     const initializeDarkMode = () => {
+      // Support both legacy 'darkMode' (boolean string) and 'theme' ("dark"|"light") keys
+      const theme = localStorage.getItem("theme");
+      const legacy = localStorage.getItem("darkMode");
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
       const isDark =
-        localStorage.getItem("darkMode") === "true" ||
-        (!localStorage.getItem("darkMode") &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches);
+        theme === "dark" ||
+        (theme === null &&
+          (legacy === "true" || (legacy === null && prefersDark)));
 
       setDarkMode(isDark);
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-      }
+      document.documentElement.classList.toggle("dark", isDark);
       setMounted(true);
     };
 
@@ -29,34 +34,51 @@ export default function DarkModeToggle() {
   const toggleDarkMode = () => {
     const newMode = !darkMode;
     setDarkMode(newMode);
+    // Persist in both formats for compatibility
     localStorage.setItem("darkMode", String(newMode));
-
-    if (newMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    localStorage.setItem("theme", newMode ? "dark" : "light");
+    document.documentElement.classList.toggle("dark", newMode);
   };
 
   if (!mounted) {
     return (
-      <button className="p-2 text-gray-600 hover:text-blue-600 transition">
-        <div className="w-5 h-5" />
-      </button>
+      <div className="flex h-11 w-20 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="h-8 w-8" />
+      </div>
     );
   }
 
   return (
-    <button
-      onClick={toggleDarkMode}
-      className="p-2 text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition"
-      aria-label="Toggle dark mode"
+    <label
+      htmlFor="darkToggler"
+      className="flex h-11 w-20 cursor-pointer items-center justify-center rounded-full bg-[#F3F4F6] transition-colors dark:bg-[#1E2763]"
     >
-      {darkMode ? (
-        <FiSun className="w-5 h-5" />
-      ) : (
-        <FiMoon className="w-5 h-5" />
-      )}
-    </button>
+      <input
+        type="checkbox"
+        id="darkToggler"
+        className="sr-only"
+        checked={darkMode}
+        onChange={toggleDarkMode}
+        aria-label="Toggle dark mode"
+      />
+      <span
+        className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+          darkMode
+            ? "bg-transparent text-[#8896A4]"
+            : "bg-[#3e7dff] text-white shadow-md"
+        }`}
+      >
+        <FiSun className="h-4 w-4" />
+      </span>
+      <span
+        className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${
+          darkMode
+            ? "bg-[#3e7dff] text-white shadow-md"
+            : "bg-transparent text-[#8896A4]"
+        }`}
+      >
+        <FiMoon className="h-4 w-4" />
+      </span>
+    </label>
   );
 }

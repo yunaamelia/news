@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-/* Enable dark mode variant */
-@variant dark (&:is(.dark *));
+/* Enable dark mode variant (Tailwind v4) */
+/* Ensure variant matches both the .dark element and all descendants */
+@variant dark (&:where(.dark, .dark *));
 
 /* Light mode (default) */
 :root {
@@ -22,6 +23,13 @@
   --color-accent-red: #ef4444;
   --color-accent-orange: #f59e0b;
   --color-accent-yellow: #eab308;
+
+  /* Crypto Theme Colors (from target) */
+  --color-primary-crypto: #3e7dff;
+  --color-dark-navy: #1e2763;
+  --color-body-text: #637381;
+  --color-body-text-2: #8896a4;
+  --color-light-bg: #f3f4f6;
 
   /* Text Colors (Light) */
   --text-primary: #0f172a;
@@ -325,6 +333,36 @@ html {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Crypto template glassmorphism styles */
+.backdrop-blur-xs {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.shadow-sticky {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.bg-gradient-hero {
+  background-image: linear-gradient(
+    180deg,
+    #3e7dff 0%,
+    rgba(62, 125, 255, 0) 100%
+  );
+}
+
+/* Navbar glassmorphism from crypto template */
+.navbar-glass-crypto {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.dark .navbar-glass-crypto {
+  background: rgba(30, 39, 99, 0.8);
 }
 
 /* Gradient text utility */

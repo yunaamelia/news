@@ -6,14 +6,13 @@ import {
   FiActivity,
   FiBarChart2,
   FiBookOpen,
-  FiMenu,
   FiSearch,
   FiStar,
   FiTrendingUp,
   FiUser,
-  FiX,
 } from "react-icons/fi";
 import DarkModeToggle from "../ui/DarkModeToggle";
+import HamburgerMenu from "../ui/HamburgerMenu";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -31,8 +30,8 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "navbar-glass shadow-2xl"
-          : "border-b border-white/5 bg-linear-to-r from-[#0a0e27] via-[#121b3a] to-[#0a0e27] shadow-lg"
+          ? "navbar-glass-crypto shadow-sticky"
+          : "border-b border-white/5 bg-linear-to-r from-[#0a0e27] via-[#121b3a] to-[#0a0e27] shadow-lg backdrop-blur-xs"
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -131,16 +130,10 @@ export default function Navbar() {
             </Link>
 
             {/* Mobile menu button */}
-            <button
+            <HamburgerMenu
+              isOpen={mobileMenuOpen}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="rounded-xl p-2.5 text-gray-400 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white lg:hidden"
-            >
-              {mobileMenuOpen ? (
-                <FiX className="h-6 w-6" />
-              ) : (
-                <FiMenu className="h-6 w-6" />
-              )}
-            </button>
+            />
           </div>
         </div>
       </div>

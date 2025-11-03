@@ -40,13 +40,15 @@ export const prisma =
       
       return new PrismaClient({
         adapter,
-        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+        // Verbose logs in development, silent in production to avoid noisy build output
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : [],
       });
     } else {
       // Standard Prisma Client for other databases (Prisma Cloud, local dev)
       return new PrismaClient({
         datasources: { db: { url: connectionString } },
-        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+        // Verbose logs in development, silent in production
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : [],
       });
     }
   })();

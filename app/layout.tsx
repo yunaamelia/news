@@ -44,10 +44,13 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  const darkMode = localStorage.getItem('darkMode') === 'true';
-                  if (darkMode) {
-                    document.documentElement.classList.add('dark');
-                  }
+                  // Read both 'theme' and legacy 'darkMode' to avoid flicker and ensure consistency
+                  var t = localStorage.getItem('theme');
+                  var d = localStorage.getItem('darkMode');
+                  var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  var isDark = t === 'dark' || (t === null && (d === 'true' || (d === null && prefers)));
+                  if (isDark) document.documentElement.classList.add('dark');
+                  else document.documentElement.classList.remove('dark');
                 } catch (e) {}
               })();
             `,
