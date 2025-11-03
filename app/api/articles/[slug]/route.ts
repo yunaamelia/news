@@ -4,14 +4,14 @@ import prisma from "@/app/lib/prisma";
 export const dynamic = "force-dynamic";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     const article = await prisma.article.findUnique({
       where: { slug },
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
     const data = await req.json();
 
     const article = await prisma.article.update({
@@ -91,7 +91,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
-    const { slug } = params;
+    const { slug } = await params;
 
     await prisma.article.delete({
       where: { slug },

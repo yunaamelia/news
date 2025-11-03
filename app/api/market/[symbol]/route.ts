@@ -4,14 +4,14 @@ import { getMarketData, getCryptoData } from "@/app/lib/market-data";
 export const dynamic = "force-dynamic";
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     symbol: string;
-  };
+  }>;
 }
 
 export async function GET(req: NextRequest, { params }: RouteParams) {
   try {
-    const { symbol } = params;
+    const { symbol } = await params;
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") || "SAHAM";
 
