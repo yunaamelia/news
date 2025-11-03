@@ -15,7 +15,13 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {
+    const where: {
+      status: string;
+      publishedAt: { lte: Date };
+      category?: string;
+      isPremium?: boolean;
+      OR?: { title?: { contains: string; mode: string }; content?: { contains: string; mode: string } }[];
+    } = {
       status: "PUBLISHED",
       publishedAt: { lte: new Date() },
     };

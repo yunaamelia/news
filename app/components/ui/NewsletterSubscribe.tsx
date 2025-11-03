@@ -31,7 +31,7 @@ export default function NewsletterSubscribe() {
         setStatus("error");
         setMessage(data.error || "Terjadi kesalahan. Silakan coba lagi.");
       }
-    } catch (error) {
+    } catch {
       setStatus("error");
       setMessage("Terjadi kesalahan. Silakan coba lagi.");
     }

@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create new subscription
-    const newsletter = await prisma.newsletter.create({
+    await prisma.newsletter.create({
       data: {
         email,
         userId: session?.user?.id || null,

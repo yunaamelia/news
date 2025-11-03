@@ -1,8 +1,8 @@
 import axios from "axios";
 import prisma from "./prisma";
 
-const ALPHA_VANTAGE_KEY = process.env.ALPHA_VANTAGE_API_KEY;
-const COINGECKO_KEY = process.env.COINGECKO_API_KEY;
+// const ALPHA_VANTAGE_KEY = process.env.ALPHA_VANTAGE_API_KEY;
+// const COINGECKO_KEY = process.env.COINGECKO_API_KEY;
 
 // Cache duration in milliseconds (5 minutes)
 const CACHE_DURATION = 5 * 60 * 1000;

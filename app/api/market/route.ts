@@ -10,7 +10,10 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type") || "all"; // 'stock', 'crypto', or 'all'
     const symbols = searchParams.get("symbols")?.split(",") || [];
 
-    let result: any = {};
+    const result: {
+      stocks?: unknown[];
+      crypto?: unknown[];
+    } = {};
 
     if (type === "stock" || type === "all") {
       // Get Indonesian stock data

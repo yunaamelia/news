@@ -62,7 +62,7 @@ export default function SignUpPage() {
       } else {
         setError(data.error || "Terjadi kesalahan. Silakan coba lagi.");
       }
-    } catch (error) {
+    } catch {
       setError("Terjadi kesalahan. Silakan coba lagi.");
     } finally {
       setLoading(false);
