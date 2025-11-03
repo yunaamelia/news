@@ -30,17 +30,25 @@ export const prisma =
       );
     }
 
-    // Create connection pool for serverless
-    const pool = new Pool({ connectionString });
-    const adapter = new PrismaNeon(pool);
-
-    return new PrismaClient({
-      adapter,
-      log:
-        process.env.NODE_ENV === "development"
-          ? ["query", "error", "warn"]
-          : ["error"],
-    });
+    // Use Neon adapter only for Vercel Postgres (has pooler in URL)
+    const isVercelPostgres = connectionString.includes('pooler') || connectionString.includes('pgbouncer=true');
+    
+    if (isVercelPostgres) {
+      // Vercel Postgres with connection pooling
+      const pool = new Pool({ connectionString });
+      const adapter = new PrismaNeon(pool as never);
+      
+      return new PrismaClient({
+        adapter,
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+      });
+    } else {
+      // Standard Prisma Client for other databases (Prisma Cloud, local dev)
+      return new PrismaClient({
+        datasources: { db: { url: connectionString } },
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+      });
+    }
   })();
 
 if (process.env.NODE_ENV !== "production") {

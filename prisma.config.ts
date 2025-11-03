@@ -5,5 +5,5 @@ export default defineConfig({
   migrations: {
     path: "prisma/migrations",
   },
-  engine: "client", // Serverless-optimized (no Rust binaries)
+  // engine: "client", // Disabled - use classic for now
 });

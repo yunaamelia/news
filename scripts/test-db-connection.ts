@@ -9,6 +9,12 @@
  * - Basic query execution
  */
 
+import dotenv from 'dotenv'
+import { resolve } from 'path'
+
+// Load .env.local
+dotenv.config({ path: resolve(process.cwd(), '.env.local') })
+
 import { prisma } from '../app/lib/prisma'
 
 async function testConnection() {
@@ -33,31 +39,19 @@ async function testConnection() {
     console.log(`✅ Articles in database: ${articleCount}`)
     console.log('')
 
-    // Test 4: Connection pool metrics
+    // Test 4: Connection pool metrics (skip - requires metrics preview feature)
     console.log('Test 4: Connection pool metrics')
-    const metrics = await prisma.$metrics.json()
-    
-    if (metrics.counters && metrics.counters.length > 0) {
-      const activeQueries = metrics.counters.find(
-        (c: any) => c.key === 'prisma_client_queries_active'
-      )
-      console.log('✅ Connection pool stats:', {
-        activeQueries: activeQueries?.value || 0,
-        metricsEnabled: true,
-      })
-    } else {
-      console.log('ℹ️  Connection pool metrics not available (expected in production)')
-    }
+    console.log('ℹ️  Metrics preview feature not enabled (optional)')
     console.log('')
 
     // Test 5: Database info
     console.log('Test 5: Database information')
-    const dbInfo = await prisma.$queryRaw`
+    const dbInfo = await prisma.$queryRaw<Array<{ database: string; user: string; version: string }>>`
       SELECT 
         current_database() as database,
         current_user as user,
         version() as version
-    ` as any[]
+    `
     
     if (dbInfo && dbInfo[0]) {
       console.log('✅ Database info:', {

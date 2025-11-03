@@ -2,8 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider   = "prisma-client-js"
-  engineType = "client" // Optimized for serverless/edge without Rust binaries
+  provider = "prisma-client-js"
+  // engineType = "client" // Disabled for now, enable when using Vercel Postgres
 }
 
 datasource db {
