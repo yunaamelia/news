@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dark Mode Test</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+        transition:
+          background-color 0.3s,
+          color 0.3s;
+      }
+
+      /* Light mode */
+      body {
+        background-color: #ffffff;
+        color: #171717;
+      }
+
+      /* Dark mode */
+      body.dark {
+        background-color: #0a0a0a;
+        color: #ededed;
+      }
+
+      .dark .card {
+        background: #1f1f1f;
+        color: #ededed;
+      }
+
+      .card {
+        background: white;
+        color: #171717;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        background: #3b82f6;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dark Mode Test</h1>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <div class="card">
+      <h2>Test Card</h2>
+      <p>This card should change appearance when dark mode is toggled.</p>
+      <p>Background and text colors should invert.</p>
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+      // Check initial state
+      const isDark = localStorage.getItem("darkMode") === "true";
+      if (isDark) {
+        document.body.classList.add("dark");
+      }
+      updateStatus();
+
+      function toggleDarkMode() {
+        const body = document.body;
+        const isDarkNow = body.classList.contains("dark");
+
+        if (isDarkNow) {
+          body.classList.remove("dark");
+          localStorage.setItem("darkMode", "false");
+        } else {
+          body.classList.add("dark");
+          localStorage.setItem("darkMode", "true");
+        }
+
+        updateStatus();
+      }
+
+      function updateStatus() {
+        const status = document.getElementById("status");
+        const isDark = document.body.classList.contains("dark");
+        const stored = localStorage.getItem("darkMode");
+
+        status.innerHTML = `
+                <h3>Status:</h3>
+                <ul>
+                    <li>Dark class on body: ${isDark}</li>
+                    <li>localStorage darkMode: ${stored}</li>
+                    <li>Current bg: ${getComputedStyle(document.body).backgroundColor}</li>
+                </ul>
+            `;
+      }
+    </script>
+  </body>
+</html>

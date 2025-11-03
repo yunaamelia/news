@@ -99,9 +99,21 @@ export default function Navbar() {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            <button className="hidden md:flex p-2.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 rounded-lg transition-all">
+            <Link
+              href="/search"
+              className="hidden md:flex p-2.5 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-800 rounded-lg transition-all"
+              title="Cari Artikel"
+            >
               <FiSearch className="w-5 h-5" />
-            </button>
+            </Link>
+
+            <Link
+              href="/bookmarks"
+              className="hidden md:flex p-2.5 text-gray-600 dark:text-gray-400 hover:text-yellow-600 dark:hover:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-gray-800 rounded-lg transition-all"
+              title="Bookmark Saya"
+            >
+              <FiBookOpen className="w-5 h-5" />
+            </Link>
 
             <DarkModeToggle />
 

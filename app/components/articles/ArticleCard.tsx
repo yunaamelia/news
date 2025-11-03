@@ -1,15 +1,75 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { FiClock, FiEye } from "react-icons/fi";
 import { Article } from "@/app/types";
+import BookmarkButton from "../ui/BookmarkButton";
+import { calculateReadingTime } from "@/app/lib/reading-time";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 interface ArticleCardProps {
   article: Article;
+  onBookmarkRemoved?: () => void;
 }
 
-export default function ArticleCard({ article }: ArticleCardProps) {
+export default function ArticleCard({ article, onBookmarkRemoved }: ArticleCardProps) {
+  const { data: session } = useSession();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+
+  // Calculate reading time from content (if available) or estimate from excerpt
+  const readingTime = article.content 
+    ? calculateReadingTime(article.content)
+    : Math.max(1, Math.ceil(article.excerpt.split(" ").length / 200));
+
+  useEffect(() => {
+    if (!session) {
+      setIsChecking(false);
+      return;
+    }
+
+    // Check if article is bookmarked
+    const checkBookmark = async () => {
+      try {
+        const response = await fetch(`/api/bookmarks?articleId=${article.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setIsBookmarked(data.bookmarks?.some((b: { article: { id: string } }) => b.article.id === article.id) || false);
+        }
+      } catch (error) {
+        console.error("Error checking bookmark:", error);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkBookmark();
+  }, [session, article.id]);
+
+  const handleBookmarkChange = (bookmarked: boolean) => {
+    setIsBookmarked(bookmarked);
+    if (!bookmarked && onBookmarkRemoved) {
+      onBookmarkRemoved();
+    }
+  };
+
   return (
-    <Link href={`/article/${article.slug}`} className="group">
-      <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+    <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition relative group">
+      {/* Bookmark Button (Top Right) */}
+      {session && !isChecking && (
+        <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+          <BookmarkButton
+            articleId={article.id}
+            initialBookmarked={isBookmarked}
+            size="sm"
+            onChange={handleBookmarkChange}
+          />
+        </div>
+      )}
+
+      <Link href={`/artikel/${article.slug}`} className="block">
         {article.coverImage && (
           <div className="relative h-48 overflow-hidden">
             <Image
@@ -38,11 +98,23 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             {article.excerpt}
           </p>
           <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>{article.author}</span>
+            <div className="flex items-center gap-3">
+              <span>{article.author}</span>
+              <div className="flex items-center gap-1">
+                <FiClock className="w-3 h-3" />
+                <span>{readingTime} menit</span>
+              </div>
+              {article.views > 0 && (
+                <div className="flex items-center gap-1">
+                  <FiEye className="w-3 h-3" />
+                  <span>{article.views}</span>
+                </div>
+              )}
+            </div>
             <span>{new Date(article.publishedAt || article.createdAt).toLocaleDateString("id-ID")}</span>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
