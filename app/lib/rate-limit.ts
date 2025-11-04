@@ -1,159 +1,203 @@
 /**
- * Simple in-memory rate limiter for API routes
- * For production, consider using Redis or similar
+ * Rate Limiting with Upstash Redis
+ *
+ * Tier-based rate limiting for production use
+ * Best practices from Context7 (@upstash/ratelimit docs)
+ *
+ * Rate Limit Tiers:
+ * - Anonymous: 10 requests/minute
+ * - Free users: 60 requests/minute
+ * - Premium users: 300 requests/minute
+ * - Admin: Unlimited
  */
 
-interface RateLimitStore {
-  [key: string]: {
-    count: number;
-    resetTime: number;
-  };
-}
+import { Ratelimit } from "@upstash/ratelimit";
+import { redis } from "./redis";
 
-const store: RateLimitStore = {};
+// Create rate limiters for different tiers
+export const rateLimiters = {
+  // Anonymous users (by IP)
+  anonymous: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "1 m"),
+    analytics: true,
+    prefix: "ratelimit:anon",
+  }),
 
-// Clean up old entries every 5 minutes
-if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    const now = Date.now();
-    Object.keys(store).forEach((key) => {
-      if (store[key].resetTime < now) {
-        delete store[key];
-      }
-    });
-  }, 5 * 60 * 1000);
-}
+  // Free tier users
+  free: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(60, "1 m"),
+    analytics: true,
+    prefix: "ratelimit:free",
+  }),
 
-interface RateLimitConfig {
-  /**
-   * Maximum number of requests allowed
-   */
-  limit: number;
-  
-  /**
-   * Time window in seconds
-   */
-  window: number;
-}
+  // Premium tier users
+  premium: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(300, "1 m"),
+    analytics: true,
+    prefix: "ratelimit:premium",
+  }),
+
+  // Stricter limits for write operations
+  write: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(20, "1 h"),
+    analytics: true,
+    prefix: "ratelimit:write",
+  }),
+
+  // Very strict for comment spam prevention
+  comment: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, "1 h"),
+    analytics: true,
+    prefix: "ratelimit:comment",
+  }),
+
+  // Authentication endpoints (strict)
+  auth: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(5, "15 m"),
+    analytics: true,
+    prefix: "ratelimit:auth",
+  }),
+};
+
+export type RateLimitTier = "anonymous" | "free" | "premium";
+export type RateLimitType = "read" | "write" | "comment" | "auth";
 
 interface RateLimitResult {
   /**
    * Whether the request is allowed
    */
   allowed: boolean;
-  
+
+  /**
+   * Maximum requests allowed
+   */
+  limit: number;
+
   /**
    * Remaining requests in the current window
    */
   remaining: number;
-  
+
   /**
-   * Time until the rate limit resets (in seconds)
+   * Timestamp when the rate limit resets
    */
-  resetIn: number;
+  reset: number;
+
+  /**
+   * Rate limit headers to include in response
+   */
+  headers: Record<string, string>;
 }
 
 /**
- * Rate limit a request based on identifier (IP, user ID, etc.)
- * 
- * @param identifier - Unique identifier for the client (IP address, user ID, etc.)
- * @param config - Rate limit configuration
- * @returns Rate limit result
- * 
- * @example
- * ```typescript
- * const result = rateLimit(req.ip, { limit: 10, window: 60 });
- * if (!result.allowed) {
- *   return NextResponse.json(
- *     { error: "Too many requests" },
- *     { status: 429 }
- *   );
- * }
- * ```
+ * Check rate limit for a user/IP
+ * @param identifier - User ID or IP address
+ * @param tier - Rate limit tier (anonymous, free, premium)
+ * @param type - Type of operation (read, write, comment, auth)
+ * @returns Rate limit result with success flag and headers
  */
-export function rateLimit(
+export async function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig = { limit: 10, window: 60 }
-): RateLimitResult {
-  const now = Date.now();
-  const windowMs = config.window * 1000;
-  const key = `${identifier}:${config.limit}:${config.window}`;
+  tier: RateLimitTier = "anonymous",
+  type?: RateLimitType
+): Promise<RateLimitResult> {
+  // Select appropriate limiter
+  let limiter = rateLimiters[tier];
 
-  // Initialize or get existing entry
-  if (!store[key] || store[key].resetTime < now) {
-    store[key] = {
-      count: 0,
-      resetTime: now + windowMs,
-    };
+  // Override with operation-specific limiter if specified
+  if (type === "write") {
+    limiter = rateLimiters.write;
+  } else if (type === "comment") {
+    limiter = rateLimiters.comment;
+  } else if (type === "auth") {
+    limiter = rateLimiters.auth;
   }
 
-  // Increment count
-  store[key].count++;
-
-  const allowed = store[key].count <= config.limit;
-  const remaining = Math.max(0, config.limit - store[key].count);
-  const resetIn = Math.ceil((store[key].resetTime - now) / 1000);
+  // Check rate limit
+  const result = await limiter.limit(identifier);
 
   return {
-    allowed,
-    remaining,
-    resetIn,
+    allowed: result.success,
+    limit: result.limit,
+    remaining: result.remaining,
+    reset: result.reset,
+    headers: {
+      "X-RateLimit-Limit": result.limit.toString(),
+      "X-RateLimit-Remaining": result.remaining.toString(),
+      "X-RateLimit-Reset": new Date(result.reset).toISOString(),
+    },
   };
 }
 
 /**
- * Get the client identifier from request
- * Prioritizes: User ID > IP address > Random
+ * Get rate limit identifier from request
+ * Uses user ID if authenticated, otherwise IP address
  */
-export function getClientIdentifier(
-  req: Request,
-  userId?: string
+export function getRateLimitIdentifier(
+  userId: string | null,
+  ip: string | null
 ): string {
-  // Use user ID if authenticated
-  if (userId) {
-    return `user:${userId}`;
+  if (userId) return `user:${userId}`;
+  if (ip) return `ip:${ip}`;
+  return "unknown";
+}
+
+/**
+ * Get rate limit tier based on user role
+ */
+export function getRateLimitTier(userRole?: string | null): RateLimitTier {
+  if (!userRole) return "anonymous";
+  if (userRole === "PREMIUM") return "premium";
+  return "free";
+}
+
+/**
+ * Extract IP address from request headers
+ * Checks x-forwarded-for (Vercel) first, then x-real-ip, then fallback
+ */
+export function getClientIP(headers: Headers): string | null {
+  const forwardedFor = headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
   }
 
-  // Try to get IP from headers
-  const forwarded = req.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0].trim() : 
-             req.headers.get('x-real-ip') || 
-             'unknown';
+  const realIp = headers.get("x-real-ip");
+  if (realIp) {
+    return realIp;
+  }
+
+  return null;
+}
+
+/**
+ * Legacy function for backward compatibility
+ * @deprecated Use checkRateLimit instead
+ */
+export function getClientIdentifier(req: Request, userId?: string): string {
+  if (userId) return `user:${userId}`;
+
+  const forwarded = req.headers.get("x-forwarded-for");
+  const ip = forwarded
+    ? forwarded.split(",")[0].trim()
+    : req.headers.get("x-real-ip") || "unknown";
 
   return `ip:${ip}`;
 }
 
 /**
- * Preset rate limit configurations
+ * Preset rate limit configurations (legacy)
+ * @deprecated Use rateLimiters directly
  */
 export const RateLimitPresets = {
-  /**
-   * Strict rate limit for authentication endpoints
-   * 5 requests per 15 minutes
-   */
   AUTH: { limit: 5, window: 15 * 60 },
-
-  /**
-   * Standard rate limit for API endpoints
-   * 100 requests per minute
-   */
   API: { limit: 100, window: 60 },
-
-  /**
-   * Relaxed rate limit for public endpoints
-   * 300 requests per minute
-   */
   PUBLIC: { limit: 300, window: 60 },
-
-  /**
-   * Strict rate limit for write operations
-   * 20 requests per minute
-   */
   WRITE: { limit: 20, window: 60 },
-
-  /**
-   * Very strict for sensitive operations
-   * 3 requests per 5 minutes
-   */
   SENSITIVE: { limit: 3, window: 5 * 60 },
 };

@@ -33,7 +33,7 @@ export default async function StockMarketGrid({
       </div>
 
       {/* IHSG Index Card */}
-      <div className="mb-8 overflow-hidden rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 backdrop-blur-sm">
+      <div className="mb-8 overflow-hidden rounded-2xl border border-blue-500/30 bg-linear-to-br from-blue-600/10 to-cyan-600/10 backdrop-blur-sm">
         <div className="p-6">
           <div className="mb-2 flex items-center gap-2">
             <FiTrendingUp className="h-6 w-6 text-blue-400" />
