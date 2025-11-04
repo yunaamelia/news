@@ -455,7 +455,9 @@ export default function Home() {
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       Saham IDX
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Top Movers Today</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      Top Movers Today
+                    </p>
                   </div>
                 </div>
                 <span className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
@@ -491,7 +493,9 @@ export default function Home() {
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       Cryptocurrency
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">Top Gainers 24h</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      Top Gainers 24h
+                    </p>
                   </div>
                 </div>
                 <span className="rounded-lg bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
