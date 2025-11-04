@@ -37,7 +37,10 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* Logo with gradient */}
-          <Link href="/" className="group flex items-center gap-3">
+          <Link
+            href="/"
+            className="group flex min-w-fit shrink-0 items-center gap-3"
+          >
             <div className="bg-gradient-crypto relative flex h-12 w-12 items-center justify-center rounded-xl shadow-lg shadow-blue-500/30 transition-all duration-300 group-hover:scale-110 group-hover:shadow-blue-500/50">
               <FiTrendingUp className="h-7 w-7 text-white" />
               <div className="bg-gradient-crypto absolute inset-0 rounded-xl opacity-0 blur-xl transition-opacity group-hover:opacity-75" />
@@ -53,7 +56,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center space-x-2 lg:flex">
+          <div className="hidden grow items-center justify-center space-x-2 lg:flex">
             <Link
               href="/saham"
               className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-gray-300 transition-all duration-300 hover:bg-linear-to-r hover:from-blue-500/20 hover:to-blue-600/20 hover:text-blue-400"
@@ -95,7 +98,7 @@ export default function Navbar() {
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-fit shrink-0 items-center gap-3">
             <Link
               href="/search"
               className="hidden rounded-xl p-2.5 text-gray-400 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-cyan-400 md:flex"
