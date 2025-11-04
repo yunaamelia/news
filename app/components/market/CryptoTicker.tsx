@@ -58,7 +58,7 @@ export default function CryptoTicker({
 
   return (
     <Tooltip content={tooltipContent} position="top" delay={100}>
-      <div className="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-300/40 bg-white/95 px-5 py-3 whitespace-nowrap shadow-sm transition-all duration-300 hover:scale-105 hover:border-slate-400/60 hover:shadow-md md:gap-4 md:rounded-3xl md:px-6 md:py-4 dark:border-slate-700/50 dark:bg-slate-800/95 dark:hover:border-slate-500/60">
+      <div className="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-300/40 bg-white/95 px-5 py-3 whitespace-nowrap shadow-md transition-all duration-300 hover:scale-105 hover:border-slate-400/60 hover:shadow-lg md:gap-4 md:rounded-3xl md:px-6 md:py-4 dark:border-slate-700/50 dark:bg-slate-800/95 dark:hover:border-slate-500/60 dark:shadow-lg dark:hover:shadow-xl">
         {/* Icon Container */}
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-200 md:h-12 md:w-12 dark:bg-slate-700 dark:group-hover:bg-slate-600">
           {icon ? (
