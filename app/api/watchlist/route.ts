@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/app/lib/prisma";
 import { authOptions } from "@/app/lib/auth";
+import { validateAssetData, validateId } from "@/app/lib/validators";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -34,15 +37,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { symbol, assetType, name } = await req.json();
+    const rawData = await req.json();
+    const validatedData = validateAssetData(rawData);
 
     // Check if already exists
     const existing = await prisma.watchlist.findUnique({
       where: {
         userId_symbol_assetType: {
           userId: session.user.id,
-          symbol,
-          assetType,
+          symbol: validatedData.symbol,
+          assetType: validatedData.assetType,
         },
       },
     });
@@ -57,15 +61,21 @@ export async function POST(req: NextRequest) {
     const watchlist = await prisma.watchlist.create({
       data: {
         userId: session.user.id,
-        symbol,
-        assetType,
-        name,
+        ...validatedData,
       },
     });
 
     return NextResponse.json(watchlist, { status: 201 });
   } catch (error) {
     console.error("Error adding to watchlist:", error);
+    
+    if (error instanceof Error && error.message.includes("required")) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Gagal menambahkan ke watchlist" },
       { status: 500 }
@@ -82,10 +92,26 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    const id = validateId(searchParams.get("id"));
 
-    if (!id) {
-      return NextResponse.json({ error: "ID tidak valid" }, { status: 400 });
+    // Verify ownership before deleting
+    const watchlist = await prisma.watchlist.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!watchlist) {
+      return NextResponse.json(
+        { error: "Watchlist item tidak ditemukan" },
+        { status: 404 }
+      );
+    }
+
+    if (watchlist.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Forbidden: Anda tidak memiliki akses" },
+        { status: 403 }
+      );
     }
 
     await prisma.watchlist.delete({
@@ -95,6 +121,14 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ message: "Berhasil dihapus dari watchlist" });
   } catch (error) {
     console.error("Error removing from watchlist:", error);
+    
+    if (error instanceof Error && error.message.includes("required")) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Gagal menghapus dari watchlist" },
       { status: 500 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
 import type { Prisma } from "@prisma/client";
+import { validatePagination, validateSearchQuery, validateArticleData } from "@/app/lib/validators";
 
 export const dynamic = "force-dynamic";
 
@@ -8,10 +9,12 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
+    const { page, limit } = validatePagination(
+      searchParams.get("page") ?? undefined,
+      searchParams.get("limit") ?? undefined
+    );
     const isPremium = searchParams.get("premium") === "true";
-    const search = searchParams.get("search");
+    const search = validateSearchQuery(searchParams.get("search"));
 
     const skip = (page - 1) * limit;
 
@@ -76,28 +79,27 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const data = await req.json();
+    const rawData = await req.json();
+    const validatedData = validateArticleData(rawData);
 
     const article = await prisma.article.create({
       data: {
-        title: data.title,
-        slug: data.slug,
-        excerpt: data.excerpt,
-        content: data.content,
-        coverImage: data.coverImage,
-        category: data.category,
-        tags: data.tags || [],
-        author: data.author,
-        authorImage: data.authorImage,
-        status: data.status || "DRAFT",
-        isPremium: data.isPremium || false,
-        publishedAt: data.status === "PUBLISHED" ? new Date() : null,
+        ...validatedData,
+        publishedAt: validatedData.status === "PUBLISHED" ? new Date() : null,
       },
     });
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
     console.error("Error creating article:", error);
+    
+    if (error instanceof Error && error.message.includes("required")) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Gagal membuat artikel" },
       { status: 500 }
