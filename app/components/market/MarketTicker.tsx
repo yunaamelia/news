@@ -1,52 +1,11 @@
 "use client";
 
+import { getCryptoPrices, type CryptoPrice } from "@/app/lib/api/coingecko";
+import { useEffect, useState } from "react";
 import CryptoTicker from "../market/CryptoTicker";
+import { SkeletonTickerItem } from "../ui/Skeleton";
 
-const cryptoAssets = [
-  {
-    symbol: "BTC",
-    name: "Bitcoin",
-    icon: "/images/crypto/btc.svg",
-    price: 768500000,
-    change: 1.65,
-  },
-  {
-    symbol: "ETH",
-    name: "Ethereum",
-    icon: "/images/crypto/eth.svg",
-    price: 42300000,
-    change: -0.82,
-  },
-  {
-    symbol: "BNB",
-    name: "Binance Coin",
-    icon: "/images/crypto/bnb.svg",
-    price: 8750000,
-    change: 1.45,
-  },
-  {
-    symbol: "SOL",
-    name: "Solana",
-    icon: "/images/crypto/sol.svg",
-    price: 3250000,
-    change: 3.24,
-  },
-  {
-    symbol: "XRP",
-    name: "Ripple",
-    icon: "/images/crypto/xrp.svg",
-    price: 8500,
-    change: -1.12,
-  },
-  {
-    symbol: "ADA",
-    name: "Cardano",
-    icon: "/images/crypto/ada.svg",
-    price: 7800,
-    change: 0.56,
-  },
-];
-
+// Mock stock data (masih mock, nanti bisa diganti dengan API stocks)
 const idxStocks = [
   {
     symbol: "BBCA",
@@ -75,11 +34,56 @@ const idxStocks = [
 ];
 
 export default function MarketTicker() {
-  // Gabungkan semua asset jadi satu array untuk infinite scroll
+  const [cryptoData, setCryptoData] = useState<CryptoPrice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function fetchData() {
+      try {
+        setIsLoading(true);
+        const data = await getCryptoPrices();
+        if (mounted) {
+          setCryptoData(data);
+          setError(null);
+        }
+      } catch (err) {
+        if (mounted) {
+          setError("Gagal memuat data kripto");
+          console.error("Fetch error:", err);
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchData();
+
+    // Auto-refresh setiap 30 detik
+    const interval = setInterval(fetchData, 30000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Gabungkan crypto real-time + stocks mock
   const allAssets = [
-    ...cryptoAssets.map((a) => ({ ...a, type: "crypto" as const })),
-    ...idxStocks.map((a) => ({
-      ...a,
+    ...cryptoData.map((crypto) => ({
+      symbol: crypto.symbol.toUpperCase(),
+      name: crypto.name,
+      icon: crypto.image,
+      price: crypto.current_price,
+      change: crypto.price_change_percentage_24h,
+      type: "crypto" as const,
+    })),
+    ...idxStocks.map((stock) => ({
+      ...stock,
       type: "stock" as const,
       icon: undefined,
     })),
@@ -88,35 +92,52 @@ export default function MarketTicker() {
   return (
     <div className="w-screen overflow-hidden border border-slate-200/60 bg-slate-50/50 shadow-md backdrop-blur-sm md:py-6 md:text-lg lg:py-8 lg:text-xl dark:border-slate-700/50 dark:bg-slate-800/50">
       <div className="py-3 md:py-0">
-        {/* Scrolling Container */}
-        <div className="relative flex overflow-visible">
-          {/* Animate infinite scroll - duplicate content for seamless loop */}
-          <div className="animate-scroll flex gap-4 md:gap-6">
-            {allAssets.map((asset, idx) => (
-              <CryptoTicker
-                key={`${asset.symbol}-${idx}`}
-                symbol={asset.symbol}
-                name={asset.name}
-                icon={asset.icon}
-                price={asset.price}
-                change={asset.change}
-                showPrice
-              />
-            ))}
-            {/* Duplicate untuk seamless loop */}
-            {allAssets.map((asset, idx) => (
-              <CryptoTicker
-                key={`${asset.symbol}-dup-${idx}`}
-                symbol={asset.symbol}
-                name={asset.name}
-                icon={asset.icon}
-                price={asset.price}
-                change={asset.change}
-                showPrice
-              />
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex gap-4 px-4 md:gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonTickerItem key={i} />
             ))}
           </div>
-        </div>
+        )}
+
+        {/* Error State */}
+        {error && !isLoading && (
+          <div className="px-4 py-2 text-center text-sm text-red-600 dark:text-red-400">
+            {error}
+          </div>
+        )}
+
+        {/* Scrolling Container */}
+        {!isLoading && !error && allAssets.length > 0 && (
+          <div className="relative flex overflow-visible">
+            <div className="animate-scroll flex gap-4 md:gap-6">
+              {allAssets.map((asset, idx) => (
+                <CryptoTicker
+                  key={`${asset.symbol}-${idx}`}
+                  symbol={asset.symbol}
+                  name={asset.name}
+                  icon={asset.icon}
+                  price={asset.price}
+                  change={asset.change}
+                  showPrice
+                />
+              ))}
+              {/* Duplicate untuk seamless loop */}
+              {allAssets.map((asset, idx) => (
+                <CryptoTicker
+                  key={`${asset.symbol}-dup-${idx}`}
+                  symbol={asset.symbol}
+                  name={asset.name}
+                  icon={asset.icon}
+                  price={asset.price}
+                  change={asset.change}
+                  showPrice
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
