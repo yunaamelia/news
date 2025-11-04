@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 import prisma from "@/app/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -79,7 +80,13 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
       },
     });
 
-    return NextResponse.json(article);
+    // On-demand ISR: Revalidate after update
+    revalidateTag("articles", "max"); // Stale-while-revalidate behavior
+    revalidatePath(`/artikel/${article.slug}`);
+    revalidatePath("/artikel");
+    revalidatePath(`/${article.category.toLowerCase()}`);
+
+    console.log("[ISR] Cache invalidated after update:", article.slug);    return NextResponse.json(article);
   } catch (error) {
     console.error("Error updating article:", error);
     return NextResponse.json(
@@ -93,9 +100,20 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const { slug } = await params;
 
+    const article = await prisma.article.findUnique({ where: { slug } });
+    
     await prisma.article.delete({
       where: { slug },
     });
+
+    // On-demand ISR: Revalidate after delete
+    if (article) {
+      revalidateTag("articles", "max"); // Stale-while-revalidate behavior
+      revalidatePath("/artikel");
+      revalidatePath(`/${article.category.toLowerCase()}`);
+      
+      console.log("[ISR] Cache invalidated after delete:", slug);
+    }
 
     return NextResponse.json({ message: "Artikel berhasil dihapus" });
   } catch (error) {

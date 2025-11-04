@@ -5,6 +5,7 @@
 ### Ringkasan Optimasi
 
 **Best Practices dari Prisma Docs (Context7)**:
+
 - Index foreign keys untuk JOIN performance
 - Composite indexes dengan column selectivity order
 - Named indexes untuk maintenance
@@ -14,6 +15,7 @@
 ### Perubahan Schema
 
 **1. Article Model** (Most Accessed)
+
 ```prisma
 // Before: 7 basic indexes
 @@index([slug])
@@ -35,12 +37,14 @@
 ```
 
 **Query Pattern Coverage**:
+
 - `/artikel/[slug]` → `idx_article_slug` (unique lookup)
 - `/api/articles?category=SAHAM` → `idx_article_category_status_published`
 - `/api/articles?premium=true` → `idx_article_premium_status_published`
 - Article listing with date sort → DESC sort direction in index
 
 **2. Comment Model**
+
 ```prisma
 // Added: Parent comment index (for nested replies)
 @@index([parentId], name: "idx_comment_parent")
@@ -50,6 +54,7 @@
 ```
 
 **3. MarketDataCache Model**
+
 ```prisma
 // Optimized: Removed redundant indexes, added cleanup optimization
 @@index([expiresAt], name: "idx_market_cache_expires")  // For cron cleanup jobs
@@ -57,12 +62,14 @@
 ```
 
 **4. Watchlist Model**
+
 ```prisma
 // Added: User watchlist sorted by date
 @@index([userId, addedAt(sort: Desc)], name: "idx_watchlist_user_added")
 ```
 
 **5. Portfolio Model**
+
 ```prisma
 // Added: Multiple access patterns
 @@index([userId, buyDate(sort: Desc)], name: "idx_portfolio_user_buydate")
@@ -70,12 +77,14 @@
 ```
 
 **6. Bookmark Model**
+
 ```prisma
 // Added: User bookmarks sorted (for bookmark page)
 @@index([userId, createdAt(sort: Desc)], name: "idx_bookmark_user_created")
 ```
 
 **7. ReadingHistory Model**
+
 ```prisma
 // Added: Continue reading feature support
 @@index([userId, updatedAt(sort: Desc)], name: "idx_reading_history_user_updated")
@@ -85,20 +94,22 @@
 ### Breaking Changes & Fixes
 
 **Unique Constraint Naming Convention Changed**:
+
 ```typescript
 // Before (auto-generated):
-userId_articleId
-userId_symbol_assetType
-symbol_assetType
+userId_articleId;
+userId_symbol_assetType;
+symbol_assetType;
 
 // After (explicit naming):
-idx_bookmark_user_article_unique
-idx_watchlist_user_symbol_type_unique
-idx_market_cache_symbol_type_unique
-idx_reading_history_user_article_unique
+idx_bookmark_user_article_unique;
+idx_watchlist_user_symbol_type_unique;
+idx_market_cache_symbol_type_unique;
+idx_reading_history_user_article_unique;
 ```
 
 **Files Updated untuk Breaking Changes**:
+
 1. `app/api/bookmarks/route.ts` (3 occurrences)
 2. `app/api/reading-history/route.ts` (1 occurrence)
 3. `app/api/watchlist/route.ts` (1 occurrence)
@@ -109,6 +120,7 @@ idx_reading_history_user_article_unique
 **Expected Query Performance Improvements**:
 
 **1. Article Listing Queries**
+
 ```sql
 -- Before: Full table scan + sort
 SELECT * FROM Article WHERE status = 'PUBLISHED' ORDER BY publishedAt DESC;
@@ -120,9 +132,10 @@ SELECT * FROM Article WHERE status = 'PUBLISHED' ORDER BY publishedAt DESC;
 ```
 
 **2. Category Filtering**
+
 ```sql
 -- Before: Separate category index + publishedAt sort
-SELECT * FROM Article WHERE category = 'KRIPTO' AND status = 'PUBLISHED' 
+SELECT * FROM Article WHERE category = 'KRIPTO' AND status = 'PUBLISHED'
 ORDER BY publishedAt DESC LIMIT 10;
 -- Execution: ~150-300ms
 
@@ -132,6 +145,7 @@ ORDER BY publishedAt DESC LIMIT 10;
 ```
 
 **3. Comment Loading (Nested)**
+
 ```sql
 -- Before: No parentId index (full scan for replies)
 SELECT * FROM Comment WHERE parentId = 'xxx' ORDER BY createdAt DESC;
@@ -143,6 +157,7 @@ SELECT * FROM Comment WHERE parentId = 'xxx' ORDER BY createdAt DESC;
 ```
 
 **4. Watchlist/Portfolio Queries**
+
 ```sql
 -- Before: userId index + application-level sort
 SELECT * FROM Watchlist WHERE userId = 'xxx' ORDER BY addedAt DESC;
@@ -156,6 +171,7 @@ SELECT * FROM Watchlist WHERE userId = 'xxx' ORDER BY addedAt DESC;
 ### Index Storage Cost
 
 **PostgreSQL Index Size Estimation**:
+
 - Each index: ~1-2% of table size
 - Article table (10K rows): ~15MB data, ~2MB per index (7 indexes = ~14MB)
 - Total new index overhead: ~25-30MB (acceptable for performance gain)
@@ -163,22 +179,27 @@ SELECT * FROM Watchlist WHERE userId = 'xxx' ORDER BY addedAt DESC;
 ### Best Practices Applied
 
 ✅ **1. Foreign Key Indexing** (Prisma recommendation)
+
 - All foreign keys (articleId, userId, parentId) indexed
 - Prevents slow JOINs and relation queries
 
 ✅ **2. Composite Index Selectivity Order**
+
 - Most selective columns first: `[category, status, publishedAt]`
 - `category` (6 values) → `status` (3 values) → `publishedAt` (unique)
 
 ✅ **3. Sort Direction in Indexes**
+
 - `publishedAt(sort: Desc)` matches query ORDER BY direction
 - Eliminates separate sort operation in query plan
 
 ✅ **4. Named Indexes**
+
 - Clear naming convention: `idx_{model}_{columns}_{purpose}`
 - Easier troubleshooting with EXPLAIN ANALYZE
 
 ✅ **5. Avoid Redundant Indexes**
+
 - Removed overlapping indexes (e.g., single [symbol] when composite [symbol, assetType] exists)
 - PostgreSQL can use left-prefix of composite indexes
 
@@ -194,6 +215,7 @@ SELECT * FROM Watchlist WHERE userId = 'xxx' ORDER BY addedAt DESC;
 ### Monitoring Recommendations
 
 **Production Monitoring** (for future):
+
 ```sql
 -- Check index usage stats
 SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read
@@ -202,12 +224,12 @@ WHERE schemaname = 'public'
 ORDER BY idx_scan DESC;
 
 -- Identify unused indexes (idx_scan = 0 after 1 week)
-SELECT * FROM pg_stat_user_indexes 
-WHERE idx_scan = 0 
+SELECT * FROM pg_stat_user_indexes
+WHERE idx_scan = 0
 AND schemaname = 'public';
 
 -- Check index bloat
-SELECT * FROM pg_stat_user_indexes 
+SELECT * FROM pg_stat_user_indexes
 WHERE idx_tup_read / NULLIF(idx_scan, 0) > 100;
 ```
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
 import prisma from "@/app/lib/prisma";
 import type { Prisma } from "@prisma/client";
 import { validatePagination, validateSearchQuery, validateArticleData } from "@/app/lib/validators";
@@ -88,6 +89,15 @@ export async function POST(req: NextRequest) {
         publishedAt: validatedData.status === "PUBLISHED" ? new Date() : null,
       },
     });
+
+    // On-demand ISR: Revalidate artikel pages (Best practice: revalidateTag dengan stale-while-revalidate)
+    if (article.status === "PUBLISHED") {
+      revalidateTag("articles", "max"); // Invalidate all articles cache with stale-while-revalidate
+      revalidatePath("/artikel"); // Revalidate artikel listing page
+      revalidatePath(`/${article.category.toLowerCase()}`); // Revalidate category page
+      
+      console.log("[ISR] Cache invalidated for new article:", article.slug);
+    }
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
