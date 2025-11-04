@@ -299,7 +299,7 @@ export default function Home() {
         {/* Wave divider */}
         <div className="absolute bottom-0 left-0 w-full">
           <svg
-            className="fill-gray-50"
+            className="fill-gray-50 dark:fill-slate-900"
             viewBox="0 0 1440 120"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -309,13 +309,13 @@ export default function Home() {
       </section>
 
       {/* Features Section - Modern cards with hover effects */}
-      <section className="relative bg-linear-to-b from-gray-50 to-white py-20">
+      <section className="relative bg-linear-to-b from-gray-50 to-white py-20 dark:from-slate-900 dark:to-slate-800">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl">
+            <h2 className="mb-4 text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
               Kenapa Memilih BeritaFinansial?
             </h2>
-            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+            <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-gray-300">
               Platform all-in-one dengan fitur lengkap untuk mendukung keputusan
               investasi Anda
             </p>
@@ -323,16 +323,16 @@ export default function Home() {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Feature Card 1 */}
-            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl">
-              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-blue-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-500">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-blue-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-blue-900/30"></div>
               <div className="relative">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 transition-transform group-hover:scale-110">
                   <FiBarChart2 className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                <h3 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">
                   Data Real-Time
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                   Pantau pergerakan harga saham dan kripto secara real-time
                   dengan akurasi tinggi
                 </p>
@@ -340,16 +340,16 @@ export default function Home() {
             </div>
 
             {/* Feature Card 2 */}
-            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-green-200 hover:shadow-2xl">
-              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-green-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-green-200 hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800 dark:hover:border-green-500">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-green-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-green-900/30"></div>
               <div className="relative">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-green-500 to-green-600 transition-transform group-hover:scale-110">
                   <FiActivity className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                <h3 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">
                   Analisis Expert
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                   Dapatkan insight dan analisis mendalam dari para ahli
                   finansial berpengalaman
                 </p>
@@ -357,16 +357,16 @@ export default function Home() {
             </div>
 
             {/* Feature Card 3 */}
-            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-purple-200 hover:shadow-2xl">
-              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-purple-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-purple-200 hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800 dark:hover:border-purple-500">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-purple-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-purple-900/30"></div>
               <div className="relative">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-purple-500 to-purple-600 transition-transform group-hover:scale-110">
                   <FiBook className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                <h3 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">
                   Edukasi Lengkap
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                   Tingkatkan skill trading Anda dengan panduan lengkap dari
                   pemula hingga mahir
                 </p>
@@ -374,16 +374,16 @@ export default function Home() {
             </div>
 
             {/* Feature Card 4 */}
-            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-2xl">
-              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-orange-200 hover:shadow-2xl dark:border-slate-700 dark:bg-slate-800 dark:hover:border-orange-500">
+              <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-orange-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100 dark:from-orange-900/30"></div>
               <div className="relative">
                 <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-orange-500 to-orange-600 transition-transform group-hover:scale-110">
                   <FiShield className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="mb-3 text-xl font-bold text-gray-900">
+                <h3 className="mb-3 text-xl font-bold text-gray-900 dark:text-white">
                   100% Terpercaya
                 </h3>
-                <p className="leading-relaxed text-gray-600">
+                <p className="leading-relaxed text-gray-600 dark:text-gray-300">
                   Berita akurat dan terverifikasi dari sumber terpercaya tanpa
                   bias
                 </p>
@@ -394,21 +394,21 @@ export default function Home() {
       </section>
 
       {/* Featured Article */}
-      <section className="bg-white py-20">
+      <section className="bg-white py-20 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-700 dark:bg-red-900/40 dark:text-red-400">
                 <FiClock className="h-4 w-4" />
                 <span>Trending Now</span>
               </div>
-              <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
+              <h2 className="text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
                 Berita Utama
               </h2>
             </div>
             <Link
               href="/artikel"
-              className="group hidden items-center gap-2 font-semibold text-blue-600 hover:text-blue-700 md:inline-flex"
+              className="group hidden items-center gap-2 font-semibold text-blue-600 hover:text-blue-700 md:inline-flex dark:text-blue-400 dark:hover:text-blue-300"
             >
               <span>Lihat Semua</span>
               <FiArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -419,18 +419,18 @@ export default function Home() {
       </section>
 
       {/* Market Overview - Glassmorphism design */}
-      <section className="relative overflow-hidden bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 py-20">
+      <section className="relative overflow-hidden bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 py-20 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         {/* Decorative background */}
-        <div className="absolute top-0 right-0 h-96 w-96 animate-pulse rounded-full bg-blue-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-        <div className="absolute bottom-0 left-0 h-96 w-96 animate-pulse rounded-full bg-purple-300 opacity-20 mix-blend-multiply blur-3xl filter delay-75"></div>
+        <div className="absolute top-0 right-0 h-96 w-96 animate-pulse rounded-full bg-blue-300 opacity-20 mix-blend-multiply blur-3xl filter dark:bg-blue-600 dark:opacity-10"></div>
+        <div className="absolute bottom-0 left-0 h-96 w-96 animate-pulse rounded-full bg-purple-300 opacity-20 mix-blend-multiply blur-3xl filter delay-75 dark:bg-purple-600 dark:opacity-10"></div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 flex flex-col items-start justify-between md:flex-row md:items-center">
             <div>
-              <h2 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl">
+              <h2 className="mb-2 text-3xl font-bold text-gray-900 md:text-4xl dark:text-white">
                 Pasar Hari Ini
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-300">
                 Pantau pergerakan harga terkini dari pasar saham dan kripto
               </p>
             </div>
@@ -445,20 +445,20 @@ export default function Home() {
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             {/* Saham Card */}
-            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl">
+            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl dark:border-slate-700/50 dark:bg-slate-800/70">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600">
                     <FiTrendingUp className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       Saham IDX
                     </h3>
-                    <p className="text-sm text-gray-600">Top Movers Today</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Top Movers Today</p>
                   </div>
                 </div>
-                <span className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800">
+                <span className="rounded-lg bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-800 dark:bg-blue-900/40 dark:text-blue-300">
                   IHSG +0.8%
                 </span>
               </div>
@@ -481,20 +481,20 @@ export default function Home() {
             </div>
 
             {/* Kripto Card */}
-            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl">
+            <div className="rounded-3xl border border-white/50 bg-white/70 p-8 shadow-xl backdrop-blur-xl transition-all hover:shadow-2xl dark:border-slate-700/50 dark:bg-slate-800/70">
               <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-purple-500 to-purple-600">
                     <FiActivity className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                       Cryptocurrency
                     </h3>
-                    <p className="text-sm text-gray-600">Top Gainers 24h</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Top Gainers 24h</p>
                   </div>
                 </div>
-                <span className="rounded-lg bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-800">
+                <span className="rounded-lg bg-purple-100 px-4 py-2 text-sm font-semibold text-purple-800 dark:bg-purple-900/40 dark:text-purple-300">
                   Market Cap $2.1T
                 </span>
               </div>
