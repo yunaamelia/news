@@ -238,12 +238,16 @@ export default function Home() {
               berita real-time, analisis mendalam, dan data pasar saham & kripto
               dalam satu tempat.
             </p>
+          </div>
+        </div>
 
-            {/* Market Ticker */}
-            <div className="mx-auto mb-8 w-full max-w-7xl overflow-hidden rounded-xl">
-              <MarketTicker />
-            </div>
+        {/* Market Ticker - Full Width */}
+        <div className="mb-8">
+          <MarketTicker />
+        </div>
 
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
             {/* CTA Buttons */}
             <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
               <Link
