@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import prisma from "@/app/lib/prisma";
 import { authOptions } from "@/app/lib/auth";
+import prisma from "@/app/lib/prisma";
 import { validateAssetData, validateId } from "@/app/lib/validators";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     // Check if already exists
     const existing = await prisma.watchlist.findUnique({
       where: {
-        userId_symbol_assetType: {
+        idx_watchlist_user_symbol_type_unique: {
           userId: session.user.id,
           symbol: validatedData.symbol,
           assetType: validatedData.assetType,
@@ -68,14 +68,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(watchlist, { status: 201 });
   } catch (error) {
     console.error("Error adding to watchlist:", error);
-    
+
     if (error instanceof Error && error.message.includes("required")) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    
+
     return NextResponse.json(
       { error: "Gagal menambahkan ke watchlist" },
       { status: 500 }
@@ -121,14 +118,11 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ message: "Berhasil dihapus dari watchlist" });
   } catch (error) {
     console.error("Error removing from watchlist:", error);
-    
+
     if (error instanceof Error && error.message.includes("required")) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    
+
     return NextResponse.json(
       { error: "Gagal menghapus dari watchlist" },
       { status: 500 }

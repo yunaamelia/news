@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
     // Upsert reading history
     const history = await prisma.readingHistory.upsert({
       where: {
-        userId_articleId: {
+        idx_reading_history_user_article_unique: {
           userId: user.id,
           articleId,
         },

@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
     // Check if already bookmarked
     const existing = await prisma.bookmark.findUnique({
       where: {
-        userId_articleId: {
+        idx_bookmark_user_article_unique: {
           userId: user.id,
           articleId,
         },
@@ -190,7 +190,7 @@ export async function DELETE(req: NextRequest) {
 
     const bookmark = await prisma.bookmark.findUnique({
       where: {
-        userId_articleId: {
+        idx_bookmark_user_article_unique: {
           userId: user.id,
           articleId,
         },

@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")      // Pooled connection for queries
+  url       = env("POSTGRES_PRISMA_URL") // Pooled connection for queries
   directUrl = env("POSTGRES_URL_NON_POOLING") // Direct connection for migrations
 }
 
@@ -81,34 +81,39 @@ model VerificationToken {
 
 // Content Management
 model Article {
-  id          String        @id @default(cuid())
+  id          String          @id @default(cuid())
   title       String
-  slug        String        @unique
-  excerpt     String        @db.Text
-  content     String        @db.Text
+  slug        String          @unique
+  excerpt     String          @db.Text
+  content     String          @db.Text
   coverImage  String?
   category    ArticleCategory
   tags        String[]
   author      String
   authorImage String?
-  status      ArticleStatus @default(DRAFT)
-  isPremium   Boolean       @default(false)
-  views       Int           @default(0)
+  status      ArticleStatus   @default(DRAFT)
+  isPremium   Boolean         @default(false)
+  views       Int             @default(0)
   publishedAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 
-  comments    Comment[]
-  bookmarks   Bookmark[]
+  comments       Comment[]
+  bookmarks      Bookmark[]
   readingHistory ReadingHistory[]
 
-  @@index([slug])
-  @@index([category])
-  @@index([publishedAt])
-  @@index([author])
-  @@index([status])
-  @@index([isPremium])
-  @@index([category, status, publishedAt])
+  // Optimized indexes based on query patterns (Best practice from Prisma docs)
+  // Single-column indexes for frequent lookups
+  @@index([slug], name: "idx_article_slug") // For /artikel/[slug] route
+  @@index([author], name: "idx_article_author") // For author filtering
+  @@index([status], name: "idx_article_status") // For status filtering
+  // Composite indexes for complex queries (ordered by selectivity)
+  // Most selective columns first for optimal query performance
+  @@index([category, status, publishedAt(sort: Desc)], name: "idx_article_category_status_published")
+  @@index([status, publishedAt(sort: Desc)], name: "idx_article_status_published")
+  @@index([isPremium, status, publishedAt(sort: Desc)], name: "idx_article_premium_status_published")
+  // Search optimization (for text search queries)
+  @@index([category, publishedAt(sort: Desc)], name: "idx_article_category_published")
 }
 
 enum ArticleCategory {
@@ -135,46 +140,53 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  article Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parent  Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  article Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
   replies Comment[] @relation("CommentReplies")
 
-  @@index([articleId])
-  @@index([userId])
+  // Optimized indexes (Best practice: Index foreign keys for joins)
+  @@index([articleId], name: "idx_comment_article") // For article.comments relation
+  @@index([userId], name: "idx_comment_user") // For user.comments relation
+  @@index([parentId], name: "idx_comment_parent") // For nested replies
+  @@index([articleId, createdAt(sort: Desc)], name: "idx_comment_article_created") // For sorted comments
 }
 
 // Watchlist & Portfolio
 model Watchlist {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   symbol    String
   assetType AssetType
   name      String
-  addedAt   DateTime @default(now())
+  addedAt   DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, symbol, assetType])
-  @@index([userId])
+  @@unique([userId, symbol, assetType], name: "idx_watchlist_user_symbol_type_unique")
+  // Optimized index for user watchlist queries
+  @@index([userId, addedAt(sort: Desc)], name: "idx_watchlist_user_added")
 }
 
 model Portfolio {
-  id           String    @id @default(cuid())
-  userId       String
-  symbol       String
-  assetType    AssetType
-  name         String
-  quantity     Float
-  buyPrice     Float
-  buyDate      DateTime
-  notes        String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  userId    String
+  symbol    String
+  assetType AssetType
+  name      String
+  quantity  Float
+  buyPrice  Float
+  buyDate   DateTime
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  // Optimized indexes for portfolio queries
+  @@index([userId], name: "idx_portfolio_user")
+  @@index([userId, buyDate(sort: Desc)], name: "idx_portfolio_user_buydate")
+  @@index([userId, assetType], name: "idx_portfolio_user_type") // Filter by asset type
 }
 
 enum AssetType {
@@ -184,12 +196,12 @@ enum AssetType {
 
 // Newsletter Subscription
 model Newsletter {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  userId      String?
-  isActive    Boolean  @default(true)
-  frequency   NewsletterFrequency @default(DAILY)
-  subscribedAt DateTime @default(now())
+  id           String              @id @default(cuid())
+  email        String              @unique
+  userId       String?
+  isActive     Boolean             @default(true)
+  frequency    NewsletterFrequency @default(DAILY)
+  subscribedAt DateTime            @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
@@ -204,22 +216,23 @@ enum NewsletterFrequency {
 
 // Market Data Cache (untuk optimasi)
 model MarketDataCache {
-  id             String    @id @default(cuid())
-  symbol         String
-  assetType      AssetType
-  data           String    @db.Text
-  expiresAt      DateTime
-  createdAt      DateTime  @default(now())
+  id            String    @id @default(cuid())
+  symbol        String
+  assetType     AssetType
+  data          String    @db.Text
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
   // Stock-specific fields (optional, only for SAHAM)
-  peRatio        Float?    // Price-to-Earnings ratio
-  dividendYield  Float?    // Dividend yield percentage
-  volume52Week   BigInt?   // 52-week average volume
-  sectorId       String?   // Sector classification (e.g., "BANKING", "TECH")
+  peRatio       Float? // Price-to-Earnings ratio
+  dividendYield Float? // Dividend yield percentage
+  volume52Week  BigInt? // 52-week average volume
+  sectorId      String? // Sector classification (e.g., "BANKING", "TECH")
 
-  @@unique([symbol, assetType])
-  @@index([symbol])
-  @@index([assetType, expiresAt])
-  @@index([expiresAt])
+  @@unique([symbol, assetType], name: "idx_market_cache_symbol_type_unique")
+  // Optimized indexes for cache lookups
+  @@index([symbol], name: "idx_market_cache_symbol")
+  @@index([expiresAt], name: "idx_market_cache_expires") // For cleanup jobs
+  @@index([assetType, expiresAt], name: "idx_market_cache_type_expires") // For type-specific cleanup
 }
 
 // Bookmark System
@@ -232,25 +245,27 @@ model Bookmark {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId])
-  @@index([userId])
-  @@index([articleId])
+  @@unique([userId, articleId], name: "idx_bookmark_user_article_unique")
+  // Optimized indexes for bookmark queries
+  @@index([userId, createdAt(sort: Desc)], name: "idx_bookmark_user_created") // User's bookmarks sorted by date
+  @@index([articleId], name: "idx_bookmark_article") // Article's bookmark count
 }
 
 // Reading History
 model ReadingHistory {
-  id         String   @id @default(cuid())
-  userId     String
-  articleId  String
-  progress   Int      @default(0) // 0-100%
-  readAt     DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  articleId String
+  progress  Int      @default(0) // 0-100%
+  readAt    DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, articleId])
-  @@index([userId])
-  @@index([articleId])
-  @@index([readAt])
+  @@unique([userId, articleId], name: "idx_reading_history_user_article_unique")
+  // Optimized indexes for reading history queries
+  @@index([userId, updatedAt(sort: Desc)], name: "idx_reading_history_user_updated") // Recent reads
+  @@index([articleId], name: "idx_reading_history_article") // Article's read count
+  @@index([userId, progress], name: "idx_reading_history_user_progress") // Continue reading feature
 }

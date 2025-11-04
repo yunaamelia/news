@@ -50,7 +50,7 @@ export async function getMarketData(
     // Layer 2: Check database cache (slower but persistent)
     const cached = await prisma.marketDataCache.findUnique({
       where: {
-        symbol_assetType: {
+        idx_market_cache_symbol_type_unique: {
           symbol,
           assetType,
         },
@@ -90,7 +90,7 @@ export async function getMarketData(
       // Cache the data in both Redis and DB
       await prisma.marketDataCache.upsert({
         where: {
-          symbol_assetType: {
+          idx_market_cache_symbol_type_unique: {
             symbol,
             assetType,
           },
@@ -152,7 +152,7 @@ export async function getCryptoData(
     // Layer 2: Check database cache (slower but persistent)
     const cached = await prisma.marketDataCache.findUnique({
       where: {
-        symbol_assetType: {
+        idx_market_cache_symbol_type_unique: {
           symbol: coinId,
           assetType: "KRIPTO",
         },
@@ -212,7 +212,7 @@ export async function getCryptoData(
     // Cache the data in both Redis and DB
     await prisma.marketDataCache.upsert({
       where: {
-        symbol_assetType: {
+        idx_market_cache_symbol_type_unique: {
           symbol: coinId,
           assetType: "KRIPTO",
         },
