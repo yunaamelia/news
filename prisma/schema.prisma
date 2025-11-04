@@ -106,6 +106,9 @@ model Article {
   @@index([category])
   @@index([publishedAt])
   @@index([author])
+  @@index([status])
+  @@index([isPremium])
+  @@index([category, status, publishedAt])
 }
 
 enum ArticleCategory {
