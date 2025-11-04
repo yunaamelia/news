@@ -9,6 +9,7 @@ import {
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
+import { WebVitals } from "./components/WebVitals";
 import "./globals.css";
 import { ClientErrorBoundary } from "./providers/ClientErrorBoundary";
 import { ToastProvider } from "./providers/ToastProvider";
@@ -83,6 +84,7 @@ export default function RootLayout({
             </NextAuthProvider>
           </ToastProvider>
         </ClientErrorBoundary>
+        <WebVitals />
         <SpeedInsights />
         <Analytics />
       </body>
