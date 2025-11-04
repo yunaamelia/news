@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaTelegram, FaWhatsapp } from "react-icons/fa";
 import {
   FiCheck,
@@ -28,18 +28,15 @@ export default function ShareButton({
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [canUseWebShare, setCanUseWebShare] = useState(false);
+  
+  // Check Web Share API availability using lazy initialization
+  const [canUseWebShare] = useState(() => {
+    return typeof navigator !== "undefined" && "share" in navigator;
+  });
 
   const fullUrl = url.startsWith("http")
     ? url
     : `${process.env.NEXT_PUBLIC_SITE_URL}${url}`;
-
-  // Check Web Share API availability on mount
-  useEffect(() => {
-    if (typeof navigator !== "undefined" && "share" in navigator) {
-      setCanUseWebShare(true);
-    }
-  }, []);
 
   const shareLinks = [
     {

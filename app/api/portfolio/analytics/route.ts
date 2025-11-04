@@ -2,7 +2,7 @@ import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { AssetType } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -36,7 +36,7 @@ interface PerformanceDataPoint {
   profit: number;
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
