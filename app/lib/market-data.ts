@@ -1,5 +1,6 @@
 import axios from "axios";
 import prisma from "./prisma";
+import { CACHE_CONFIG, getCacheKey, redis } from "./redis";
 
 // const ALPHA_VANTAGE_KEY = process.env.ALPHA_VANTAGE_API_KEY;
 // const COINGECKO_KEY = process.env.COINGECKO_API_KEY;
@@ -22,13 +23,31 @@ interface MarketDataResponse {
 
 /**
  * Get stock market data from Alpha Vantage or cached data
+ * Now with Redis caching layer for improved performance
  */
 export async function getMarketData(
   symbol: string,
   assetType: "SAHAM" | "KRIPTO"
 ): Promise<MarketDataResponse | null> {
   try {
-    // Check cache first
+    // Layer 1: Check Redis cache first (fastest)
+    const cacheKey = getCacheKey.stockPrices([symbol]);
+
+    try {
+      const cachedData = await redis.get<MarketDataResponse>(cacheKey);
+      if (cachedData) {
+        console.log(`[Redis] Cache HIT: ${cacheKey}`);
+        return cachedData;
+      }
+      console.log(`[Redis] Cache MISS: ${cacheKey}`);
+    } catch (redisError) {
+      console.warn(
+        "[Redis] Connection error, falling back to DB cache:",
+        redisError
+      );
+    }
+
+    // Layer 2: Check database cache (slower but persistent)
     const cached = await prisma.marketDataCache.findUnique({
       where: {
         symbol_assetType: {
@@ -39,7 +58,16 @@ export async function getMarketData(
     });
 
     if (cached && new Date(cached.expiresAt) > new Date()) {
-      return JSON.parse(cached.data);
+      const dbData = JSON.parse(cached.data);
+
+      // Populate Redis cache for next request
+      try {
+        await redis.set(cacheKey, dbData, { ex: CACHE_CONFIG.MARKET_TTL });
+      } catch (redisError) {
+        console.warn("[Redis] Failed to populate cache:", redisError);
+      }
+
+      return dbData;
     }
 
     // Fetch fresh data for Indonesian stocks
@@ -59,7 +87,7 @@ export async function getMarketData(
         lastUpdated: new Date().toISOString(),
       };
 
-      // Cache the data
+      // Cache the data in both Redis and DB
       await prisma.marketDataCache.upsert({
         where: {
           symbol_assetType: {
@@ -79,6 +107,13 @@ export async function getMarketData(
         },
       });
 
+      // Also cache in Redis for faster subsequent access
+      try {
+        await redis.set(cacheKey, mockData, { ex: CACHE_CONFIG.MARKET_TTL });
+      } catch (redisError) {
+        console.warn("[Redis] Failed to cache data:", redisError);
+      }
+
       return mockData;
     }
 
@@ -91,12 +126,30 @@ export async function getMarketData(
 
 /**
  * Get cryptocurrency data from CoinGecko
+ * Now with Redis caching layer for improved performance
  */
 export async function getCryptoData(
   coinId: string
 ): Promise<MarketDataResponse | null> {
   try {
-    // Check cache first
+    // Layer 1: Check Redis cache first (fastest)
+    const cacheKey = getCacheKey.cryptoPrices([coinId]);
+
+    try {
+      const cachedData = await redis.get<MarketDataResponse>(cacheKey);
+      if (cachedData) {
+        console.log(`[Redis] Cache HIT: ${cacheKey}`);
+        return cachedData;
+      }
+      console.log(`[Redis] Cache MISS: ${cacheKey}`);
+    } catch (redisError) {
+      console.warn(
+        "[Redis] Connection error, falling back to DB cache:",
+        redisError
+      );
+    }
+
+    // Layer 2: Check database cache (slower but persistent)
     const cached = await prisma.marketDataCache.findUnique({
       where: {
         symbol_assetType: {
@@ -107,7 +160,16 @@ export async function getCryptoData(
     });
 
     if (cached && new Date(cached.expiresAt) > new Date()) {
-      return JSON.parse(cached.data);
+      const dbData = JSON.parse(cached.data);
+
+      // Populate Redis cache for next request
+      try {
+        await redis.set(cacheKey, dbData, { ex: CACHE_CONFIG.MARKET_TTL });
+      } catch (redisError) {
+        console.warn("[Redis] Failed to populate cache:", redisError);
+      }
+
+      return dbData;
     }
 
     // Fetch from CoinGecko API
@@ -147,7 +209,7 @@ export async function getCryptoData(
       lastUpdated: data.market_data.last_updated,
     };
 
-    // Cache the data
+    // Cache the data in both Redis and DB
     await prisma.marketDataCache.upsert({
       where: {
         symbol_assetType: {
@@ -166,6 +228,13 @@ export async function getCryptoData(
         expiresAt: new Date(Date.now() + CACHE_DURATION),
       },
     });
+
+    // Also cache in Redis for faster subsequent access
+    try {
+      await redis.set(cacheKey, marketData, { ex: CACHE_CONFIG.MARKET_TTL });
+    } catch (redisError) {
+      console.warn("[Redis] Failed to cache data:", redisError);
+    }
 
     return marketData;
   } catch (error) {
