@@ -226,14 +226,6 @@ export default function Home() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            {/* Badge */}
-            <div className="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 shadow-xl shadow-blue-500/20 backdrop-blur-sm">
-              <FiZap className="h-5 w-5 animate-pulse text-yellow-400" />
-              <span className="gradient-text-crypto text-sm font-semibold">
-                Platform #1 untuk Investor Indonesia
-              </span>
-            </div>
-
             {/* Main heading with massive gradient text */}
             <h1 className="animate-fade-in-up mb-8 text-6xl leading-[1.1] font-black tracking-tight md:text-8xl lg:text-9xl">
               <span className="bg-linear-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl">
@@ -245,11 +237,19 @@ export default function Home() {
               </span>
             </h1>
 
-            <p className="animation-delay-200 animate-fade-in-up mx-auto mb-14 max-w-4xl text-xl leading-relaxed text-gray-300 md:text-2xl">
+            <p className="animation-delay-200 animate-fade-in-up mx-auto mb-8 max-w-4xl text-xl leading-relaxed text-gray-300 md:text-2xl">
               Platform terlengkap untuk investor dan trader Indonesia. Dapatkan
               berita real-time, analisis mendalam, dan data pasar saham & kripto
               dalam satu tempat.
             </p>
+
+            {/* Badge */}
+            <div className="animate-fade-in mb-14 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 shadow-xl shadow-blue-500/20 backdrop-blur-sm">
+              <FiZap className="h-5 w-5 animate-pulse text-yellow-400" />
+              <span className="gradient-text-crypto text-sm font-semibold">
+                Platform #1 untuk Investor Indonesia
+              </span>
+            </div>
 
             {/* CTA Buttons */}
             <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
