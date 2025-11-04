@@ -1,12 +1,55 @@
 import { MarketData } from "@/app/types";
-import { FiTrendingDown, FiTrendingUp } from "react-icons/fi";
+import { FiInfo, FiTrendingDown, FiTrendingUp } from "react-icons/fi";
 
 interface MarketCardProps {
-  data: MarketData;
+  data?: MarketData; // Legacy support
+  // New direct props for stock data
+  symbol?: string;
+  name?: string;
+  price?: number;
+  change?: number;
+  volume?: string;
+  marketCap?: string;
+  additionalData?: {
+    peRatio?: number;
+    dividendYield?: number;
+    week52High?: number;
+    week52Low?: number;
+    marketState?: "OPEN" | "CLOSED" | "PRE" | "POST" | "BREAK";
+  };
 }
 
-export default function MarketCard({ data }: MarketCardProps) {
-  const isPositive = data.changePercent >= 0;
+export default function MarketCard({
+  data,
+  symbol,
+  name,
+  price,
+  change,
+  volume,
+  marketCap,
+  additionalData,
+}: MarketCardProps) {
+  // Support both legacy data prop and new direct props
+  const displaySymbol = symbol || data?.symbol || "";
+  const displayName = name || data?.name || "";
+  const displayPrice = price ?? data?.price ?? 0;
+  const displayChange = change ?? data?.changePercent ?? 0;
+  const displayVolume =
+    volume ||
+    (data?.volume
+      ? new Intl.NumberFormat("id-ID", { notation: "compact" }).format(
+          data.volume
+        )
+      : "");
+  const displayMarketCap =
+    marketCap ||
+    (data?.marketCap
+      ? new Intl.NumberFormat("id-ID", { notation: "compact" }).format(
+          data.marketCap
+        )
+      : "");
+
+  const isPositive = displayChange >= 0;
 
   return (
     <div
@@ -17,9 +60,33 @@ export default function MarketCard({ data }: MarketCardProps) {
       }`}
     >
       <div className="mb-4 flex items-start justify-between">
-        <div>
-          <h3 className="mb-1 text-xl font-black text-white">{data.symbol}</h3>
-          <p className="text-sm font-medium text-gray-400">{data.name}</p>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h3 className="mb-1 text-xl font-black text-white">
+              {displaySymbol}
+            </h3>
+            {additionalData?.marketState && (
+              <span
+                className={`text-xs font-bold ${
+                  additionalData.marketState === "OPEN"
+                    ? "text-green-400"
+                    : additionalData.marketState === "PRE" ||
+                        additionalData.marketState === "POST"
+                      ? "text-yellow-400"
+                      : additionalData.marketState === "BREAK"
+                        ? "text-blue-400"
+                        : "text-gray-500"
+                }`}
+              >
+                {additionalData.marketState === "OPEN" && "🟢"}
+                {additionalData.marketState === "PRE" && "🟡"}
+                {additionalData.marketState === "POST" && "🟠"}
+                {additionalData.marketState === "BREAK" && "🔵"}
+                {additionalData.marketState === "CLOSED" && "🔴"}
+              </span>
+            )}
+          </div>
+          <p className="text-sm font-medium text-gray-400">{displayName}</p>
         </div>
         <div
           className={`rounded-xl p-2 transition-all duration-300 group-hover:scale-110 ${
@@ -42,7 +109,7 @@ export default function MarketCard({ data }: MarketCardProps) {
             style: "currency",
             currency: "IDR",
             minimumFractionDigits: 0,
-          }).format(data.price)}
+          }).format(displayPrice)}
         </div>
 
         <div className="flex items-center gap-2">
@@ -54,44 +121,80 @@ export default function MarketCard({ data }: MarketCardProps) {
             }`}
           >
             {isPositive ? "+" : ""}
-            {data.changePercent.toFixed(2)}%
-          </span>
-          <span
-            className={`text-sm font-semibold ${
-              isPositive ? "text-green-400" : "text-red-400"
-            }`}
-          >
-            ({isPositive ? "+" : ""}
-            {new Intl.NumberFormat("id-ID").format(data.change24h)})
+            {displayChange.toFixed(2)}%
           </span>
         </div>
       </div>
 
-      <div className="border-t border-white/10 pt-4">
+      <div className="space-y-3 border-t border-white/10 pt-4">
         <div className="flex justify-between text-xs font-medium">
           <div className="flex flex-col gap-1">
             <span className="tracking-wide text-gray-500 uppercase">
               Volume
             </span>
-            <span className="font-bold text-white">
-              {new Intl.NumberFormat("id-ID", { notation: "compact" }).format(
-                data.volume
-              )}
-            </span>
+            <span className="font-bold text-white">{displayVolume}</span>
           </div>
-          {data.marketCap && (
+          {displayMarketCap && (
             <div className="flex flex-col gap-1 text-right">
               <span className="tracking-wide text-gray-500 uppercase">
                 Market Cap
               </span>
-              <span className="font-bold text-white">
-                {new Intl.NumberFormat("id-ID", { notation: "compact" }).format(
-                  data.marketCap
-                )}
-              </span>
+              <span className="font-bold text-white">{displayMarketCap}</span>
             </div>
           )}
         </div>
+
+        {/* Stock-specific data */}
+        {additionalData &&
+          (additionalData.peRatio || additionalData.dividendYield) && (
+            <div className="flex justify-between border-t border-white/5 pt-3 text-xs">
+              {additionalData.peRatio && (
+                <div className="flex flex-col gap-1">
+                  <span className="tracking-wide text-gray-500 uppercase">
+                    P/E Ratio
+                  </span>
+                  <span className="font-bold text-white">
+                    {additionalData.peRatio.toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {additionalData.dividendYield && (
+                <div className="flex flex-col gap-1 text-right">
+                  <span className="tracking-wide text-gray-500 uppercase">
+                    Dividend
+                  </span>
+                  <span className="font-bold text-white">
+                    {additionalData.dividendYield.toFixed(2)}%
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+        {/* 52-week range */}
+        {additionalData &&
+          additionalData.week52High &&
+          additionalData.week52Low && (
+            <div className="border-t border-white/5 pt-3 text-xs">
+              <div className="mb-1 flex items-center gap-1 text-gray-500">
+                <FiInfo className="h-3 w-3" />
+                <span className="tracking-wide uppercase">52-Week Range</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-red-400">
+                  {new Intl.NumberFormat("id-ID").format(
+                    additionalData.week52Low
+                  )}
+                </span>
+                <div className="h-1 flex-1 rounded-full bg-linear-to-r from-red-500 via-yellow-500 to-green-500"></div>
+                <span className="font-semibold text-green-400">
+                  {new Intl.NumberFormat("id-ID").format(
+                    additionalData.week52High
+                  )}
+                </span>
+              </div>
+            </div>
+          )}
       </div>
     </div>
   );

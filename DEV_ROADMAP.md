@@ -628,26 +628,310 @@ GET /api/market/*: 300/hour
 
 ---
 
+## 🆕 Phase 16: UI/UX Enhancement (COMPLETED ✅)
+
+**Priority**: HIGH  
+**Timeline**: 1 week  
+**Status**: Completed (November 4, 2025)  
+**Commits**: bb6f025, 0e0b270, 61a199a, affa059
+
+### Completed Features:
+
+#### 16.1 Loading States & Skeleton Screens ✅
+
+- Created SkeletonTickerItem, SkeletonMarketCard, SkeletonArticleCard
+- Integrated into MarketTicker, MarketOverview, CryptoMarketGrid
+- Dark mode support with pulse animations
+- Prevents layout shift during data loading
+
+#### 16.2 Real-time Market Data Integration ✅
+
+- Built CoinGecko API client (`app/lib/api/coingecko.ts`)
+- MarketTicker: 6 cryptocurrencies live + 4 stocks mock
+- Homepage MarketOverview: BTC, ETH, BNB real-time prices
+- /kripto page: 12 cryptocurrencies with live data
+- /saham page: 3 crypto temporary (stock API pending)
+- Auto-refresh every 30 seconds
+- Error handling with fallback data
+- formatIDR helper for Indonesian Rupiah formatting
+
+#### 16.3 Smooth Animations ✅
+
+- Framer Motion integration
+- Fade-in animations with stagger (0.05s CryptoMarketGrid, 0.1s MarketOverview)
+- whileHover scale effects (1.02)
+- AnimatePresence for smooth transitions
+- Slide-in animations from left/below
+
+#### 16.4 Tailwind CSS v4 Migration ✅
+
+- Fixed deprecated classes in premium page (22x `flex-shrink-0` → `shrink-0`)
+- Updated Toast component gradient syntax
+- Fixed size utilities (`h-8 w-8` → `size-8`)
+- Remaining: Markdown documentation warnings (low priority)
+
+#### 16.5 Error Handling & Resilience ✅
+
+- ErrorBoundary component with exponential backoff retry logic
+- Retry strategy: 1s, 2s, 4s, 8s, 16s, 30s max (5 attempts limit)
+- ClientErrorBoundary wrapper for Next.js Server Components compatibility
+- ToastProvider with Context API for global toast management
+- OfflineDetector component using navigator.onLine API
+- Root layout integration with provider hierarchy
+- Best practices from `/bvaughn/react-error-boundary` (Context7)
+
+### Technical Implementation:
+
+```typescript
+// Provider Hierarchy
+<ClientErrorBoundary>
+  <ToastProvider>
+    <NextAuthProvider>
+      <Navbar />
+      <main>{children}</main>
+      <Footer />
+      <OfflineDetector />
+    </NextAuthProvider>
+  </ToastProvider>
+</ClientErrorBoundary>
+```
+
+### Files Created/Modified:
+
+- `app/lib/api/coingecko.ts` (NEW)
+- `app/components/ErrorBoundary.tsx` (NEW, 220 lines)
+- `app/components/OfflineDetector.tsx` (NEW, 80 lines)
+- `app/providers/ClientErrorBoundary.tsx` (NEW)
+- `app/providers/ToastProvider.tsx` (NEW)
+- `app/components/ui/Toast.tsx` (UPDATED)
+- `app/components/market/CryptoMarketGrid.tsx` (NEW)
+- `app/components/MarketOverview.tsx` (NEW)
+- `app/components/ui/Skeleton.tsx` (ENHANCED)
+- `app/layout.tsx` (INTEGRATED)
+
+---
+
+## 🎯 Phase 17: Stock Market Data Integration (NEXT - IN PROGRESS)
+
+**Priority**: HIGH  
+**Timeline**: 1-2 weeks  
+**Status**: Starting Implementation  
+**Assigned**: November 4, 2025
+
+### Goals:
+
+- Replace mock stock data with real Yahoo Finance / Alpha Vantage API
+- Add real-time IHSG (Indonesian Stock Exchange) ticker
+- Support top Indonesian stocks (BBCA, BBRI, TLKM, ASII, BMRI, etc.)
+- Historical price data and charts
+- Stock fundamentals (P/E ratio, market cap, dividend yield)
+
+### Research Best Practices:
+
+Using Context7 for industry-standard implementations:
+
+- API client architecture patterns
+- Error handling and retry strategies
+- Caching strategies for financial data
+- Rate limiting and quota management
+- Data normalization and formatting
+
+### API Options Analysis:
+
+**Option 1: Yahoo Finance (yfinance / yahoo-finance2)**
+
+- ✅ Free tier available
+- ✅ No API key required
+- ✅ IDX stocks supported (.JK suffix)
+- ✅ Historical data
+- ⚠️ Unofficial, may have rate limits
+- ⚠️ No official documentation
+
+**Option 2: Alpha Vantage**
+
+- ✅ Official API with documentation
+- ✅ Free tier: 25 requests/day
+- ✅ Premium tiers available
+- ⚠️ Limited free quota
+- ❌ IDX stocks support unclear
+
+**Option 3: Financial Modeling Prep**
+
+- ✅ Official API
+- ✅ Free tier: 250 requests/day
+- ✅ Good documentation
+- ⚠️ IDX stocks availability TBD
+
+**Option 4: RapidAPI Financial APIs**
+
+- ✅ Multiple providers
+- ✅ IDX stocks available
+- ⚠️ Paid plans required for production
+
+### Tasks:
+
+#### 17.1 API Client Development
+
+- [ ] Research and select stock data provider (Yahoo Finance prioritized)
+- [ ] Study best practices from Context7 for financial API clients
+- [ ] Create `app/lib/api/stock-data.ts` client
+- [ ] Implement error handling with exponential backoff
+- [ ] Add request caching (5-minute TTL similar to crypto)
+- [ ] Create StockPrice interface matching CryptoPrice structure
+- [ ] Implement formatters for Indonesian market data
+- [ ] Add fallback data for API failures
+- [ ] Unit tests for API client
+
+#### 17.2 Database Integration
+
+- [ ] Update MarketDataCache model to support stocks
+- [ ] Add stock-specific fields (P/E ratio, dividend yield, volume)
+- [ ] Create indexes for stock symbol lookups
+- [ ] Migration for schema changes
+
+#### 17.3 Frontend Integration
+
+- [ ] Update MarketTicker to use real stock data
+- [ ] Enhance /saham page with real Indonesian stocks
+- [ ] Remove "Coming Soon" notice from /saham
+- [ ] Add IHSG index ticker component
+- [ ] Update MarketOverview with real stock prices
+- [ ] Add stock search functionality
+- [ ] Stock detail page with charts
+
+#### 17.4 Market Data Sync
+
+- [ ] Background job for price updates (every 5 minutes)
+- [ ] Handle market hours (JATS: 09:00-15:50 WIB)
+- [ ] Display "Market Closed" status outside trading hours
+- [ ] Pre-market and after-hours indicators
+
+#### 17.5 Stock-Specific Features
+
+- [ ] Top gainers/losers section
+- [ ] Most active stocks by volume
+- [ ] Sector performance breakdown
+- [ ] Stock screener (basic filters)
+- [ ] Company information display
+
+### Technical Considerations:
+
+- **Rate Limiting**: Implement aggressive caching to minimize API calls
+- **Market Hours**: Only fetch during JATS trading hours (09:00-15:50 WIB)
+- **Symbol Format**: Convert internal symbols to API format (BBCA → BBCA.JK)
+- **Error Handling**: Graceful degradation to cached/fallback data
+- **Performance**: Batch requests where possible
+- **Cost**: Monitor API usage to stay within free tier limits
+
+### Success Metrics:
+
+- ✅ Replace all mock stock data with real API data
+- ✅ < 200ms average API response time (with caching)
+- ✅ 99% uptime for stock data display
+- ✅ Support minimum 20 Indonesian blue-chip stocks
+- ✅ Real-time IHSG index display
+- ✅ Zero API cost overruns (stay in free tier)
+
+---
+
+## 📊 Additional Enhancement Opportunities
+
+Based on recent development session, these opportunities can be integrated into existing phases:
+
+### 🧪 Testing & Quality Assurance (Integrate into Phase 5)
+
+**Priority**: HIGH  
+**Add to Phase 5 tasks:**
+
+- [ ] Unit tests for ErrorBoundary component
+- [ ] Unit tests for CoinGecko API client
+- [ ] Unit tests for stock API client (Phase 17)
+- [ ] E2E tests with Playwright:
+  - User registration and login flow
+  - Article browsing and bookmarking
+  - Watchlist management
+  - Portfolio tracking
+- [ ] Visual regression testing for UI components
+- [ ] Accessibility testing (axe-core, WAVE)
+- [ ] Performance testing (Lighthouse CI in GitHub Actions)
+
+### 📊 Production Monitoring (Integrate into Phase 9)
+
+**Priority**: HIGH  
+**Add to Phase 9 tasks:**
+
+- [ ] Sentry integration for error tracking
+- [ ] Google Analytics 4 or Plausible Analytics
+- [ ] Web Vitals monitoring (CLS, LCP, FID)
+- [ ] API response time tracking
+- [ ] Uptime monitoring (UptimeRobot or Vercel)
+- [ ] Custom dashboards for metrics
+
+### 📱 Mobile & PWA Enhancements (Integrate into Phase 12)
+
+**Priority**: MEDIUM  
+**Before Phase 12, enhance existing PWA:**
+
+- [ ] Enhanced offline mode (Service Worker caching)
+- [ ] Install prompt improvements
+- [ ] Custom splash screen
+- [ ] Push notifications for price alerts
+- [ ] Touch gesture optimizations
+- [ ] Bottom navigation for mobile (alternative to top navbar)
+
+### 🔒 Security Enhancements (Integrate into Phase 9)
+
+**Priority**: HIGH  
+**Add to Phase 9 security tasks:**
+
+- [ ] CAPTCHA for registration after failed attempts
+- [ ] Two-factor authentication (2FA)
+- [ ] Session management improvements
+- [ ] Content Security Policy (CSP) headers
+- [ ] Audit logging for sensitive operations
+
+---
+
 ## 🎯 Immediate Next Steps (This Week)
 
-Based on priority and impact:
+**CURRENT PRIORITY: Phase 17 - Stock Market Data Integration**
 
-1. **Create Dev Environment Checklist** - Document all setup requirements
-2. **Performance Baseline** - Run Lighthouse audit, bundle analyzer
-3. **Security Audit** - Review authentication, API routes, data validation
-4. **Choose Phase 5 or Phase 6** - Decision on next major feature
-5. **Update Project Board** - Migrate roadmap to GitHub Projects
+1. ✅ **Update DEV_ROADMAP.md** - Add Phase 16 completion and Phase 17 details
+2. 🚧 **Research Stock Data APIs** - Evaluate Yahoo Finance, Alpha Vantage, FMP
+3. 🚧 **Study Context7 Best Practices** - Financial API client patterns
+4. ⏳ **Create stock-data.ts API client** - Follow CoinGecko client architecture
+5. ⏳ **Update MarketTicker** - Replace mock data with real stocks
+6. ⏳ **Enhance /saham page** - Full Indonesian stock market coverage
 
 ---
 
 ## 📝 Notes & Decisions Log
 
-### November 4, 2025
+### November 4, 2025 (Morning)
 
 - ✅ Created comprehensive development roadmap
 - ✅ Documented 15 phases of development
 - ✅ Prioritized performance optimization and price alerts
 - ⏳ Awaiting decision on Phase 5 vs Phase 6 priority
+
+### November 4, 2025 (Afternoon - Session 1)
+
+- ✅ Completed Phase 16: UI/UX Enhancement (5 tasks)
+  - Loading states & skeleton screens
+  - Real-time crypto data integration (CoinGecko)
+  - Smooth animations (Framer Motion)
+  - Tailwind CSS v4 migration
+  - Error handling & resilience (ErrorBoundary, Toast, Offline detection)
+- ✅ Commits: bb6f025, 0e0b270, 61a199a, affa059
+- ✅ Validation: lint ✅, tsc ✅, build ✅
+- ✅ Session saved to memory before VS Code update
+
+### November 4, 2025 (Afternoon - Session 2)
+
+- ✅ Updated DEV_ROADMAP.md with Phase 16 completion
+- ✅ Created Phase 17: Stock Market Data Integration
+- 🚧 Starting implementation of stock data API (Option 3 from enhancement list)
+- 🚧 Researching best practices from Context7
 
 ### Pending Decisions:
 

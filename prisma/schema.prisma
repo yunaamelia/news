@@ -204,15 +204,21 @@ enum NewsletterFrequency {
 
 // Market Data Cache (untuk optimasi)
 model MarketDataCache {
-  id        String   @id @default(cuid())
-  symbol    String
-  assetType AssetType
-  data      String   @db.Text
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id             String    @id @default(cuid())
+  symbol         String
+  assetType      AssetType
+  data           String    @db.Text
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  // Stock-specific fields (optional, only for SAHAM)
+  peRatio        Float?    // Price-to-Earnings ratio
+  dividendYield  Float?    // Dividend yield percentage
+  volume52Week   BigInt?   // 52-week average volume
+  sectorId       String?   // Sector classification (e.g., "BANKING", "TECH")
 
   @@unique([symbol, assetType])
   @@index([symbol])
+  @@index([assetType, expiresAt])
   @@index([expiresAt])
 }
 

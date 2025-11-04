@@ -5,36 +5,19 @@ import { useEffect, useState } from "react";
 import CryptoTicker from "../market/CryptoTicker";
 import { SkeletonTickerItem } from "../ui/Skeleton";
 
-// Mock stock data (masih mock, nanti bisa diganti dengan API stocks)
-const idxStocks = [
-  {
-    symbol: "BBCA",
-    name: "Bank Central Asia",
-    price: 9850,
-    change: 1.55,
-  },
-  {
-    symbol: "BBRI",
-    name: "Bank Rakyat Indonesia",
-    price: 5125,
-    change: -0.49,
-  },
-  {
-    symbol: "TLKM",
-    name: "Telkom Indonesia",
-    price: 3890,
-    change: 1.3,
-  },
-  {
-    symbol: "ASII",
-    name: "Astra International",
-    price: 4725,
-    change: 0.85,
-  },
-];
+// Top stocks untuk ticker
+const TICKER_STOCKS = ["BBCA", "BBRI", "TLKM", "ASII"];
+
+interface StockPrice {
+  symbol: string;
+  name: string;
+  current_price: number;
+  price_change_percentage_24h: number;
+}
 
 export default function MarketTicker() {
   const [cryptoData, setCryptoData] = useState<CryptoPrice[]>([]);
+  const [stockData, setStockData] = useState<StockPrice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,14 +27,23 @@ export default function MarketTicker() {
     async function fetchData() {
       try {
         setIsLoading(true);
-        const data = await getCryptoPrices();
+
+        // Fetch crypto and stock data in parallel via API routes
+        const [cryptoResponse, stockResponse] = await Promise.all([
+          getCryptoPrices(),
+          fetch(`/api/stocks?symbols=${TICKER_STOCKS.join(",")}`).then((r) =>
+            r.json()
+          ),
+        ]);
+
         if (mounted) {
-          setCryptoData(data);
+          setCryptoData(cryptoResponse);
+          setStockData(stockResponse.stocks || []);
           setError(null);
         }
       } catch (err) {
         if (mounted) {
-          setError("Gagal memuat data kripto");
+          setError("Gagal memuat data pasar");
           console.error("Fetch error:", err);
         }
       } finally {
@@ -72,7 +64,7 @@ export default function MarketTicker() {
     };
   }, []);
 
-  // Gabungkan crypto real-time + stocks mock
+  // Gabungkan crypto real-time + stocks real-time
   const allAssets = [
     ...cryptoData.map((crypto) => ({
       symbol: crypto.symbol.toUpperCase(),
@@ -82,13 +74,15 @@ export default function MarketTicker() {
       change: crypto.price_change_percentage_24h,
       type: "crypto" as const,
     })),
-    ...idxStocks.map((stock) => ({
-      ...stock,
-      type: "stock" as const,
+    ...stockData.map((stock) => ({
+      symbol: stock.symbol,
+      name: stock.name,
       icon: undefined,
+      price: stock.current_price,
+      change: stock.price_change_percentage_24h,
+      type: "stock" as const,
     })),
   ];
-
   return (
     <div className="w-screen overflow-hidden border border-slate-200/60 bg-slate-50/50 shadow-md backdrop-blur-sm md:py-6 md:text-lg lg:py-8 lg:text-xl dark:border-slate-700/50 dark:bg-slate-800/50">
       <div className="py-3 md:py-0">
