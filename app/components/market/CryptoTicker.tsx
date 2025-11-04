@@ -68,6 +68,7 @@ export default function CryptoTicker({
               width={24}
               height={24}
               className="h-6 w-6"
+              loading="lazy"
               unoptimized
             />
           ) : (
