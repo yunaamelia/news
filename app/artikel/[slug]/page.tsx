@@ -10,6 +10,7 @@ import {
   FiTag,
   FiUser,
 } from "react-icons/fi";
+import { ReactionButtons } from "@/app/components/social/ReactionButtons";
 
 export const revalidate = 300; // ISR: revalidate every 5 minutes
 export const dynamic = "force-dynamic"; // Always render dynamically
@@ -207,6 +208,14 @@ export default async function ArtikelDetailPage({
             className="leading-relaxed text-gray-800"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
+        </div>
+
+        {/* Reactions */}
+        <div className="mt-10 border-t border-gray-200 pt-8">
+          <p className="mb-4 text-sm font-semibold text-gray-700">
+            Bagaimana menurut Anda tentang artikel ini?
+          </p>
+          <ReactionButtons articleSlug={article.slug} />
         </div>
 
         {/* Tags */}

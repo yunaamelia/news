@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaWhatsapp, FaTelegram } from "react-icons/fa";
 import {
   FiCheck,
   FiCopy,
@@ -22,15 +22,24 @@ interface ShareButtonProps {
 export default function ShareButton({
   url,
   title,
+  description,
   size = "md",
   showText = false,
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [canUseWebShare, setCanUseWebShare] = useState(false);
 
   const fullUrl = url.startsWith("http")
     ? url
     : `${process.env.NEXT_PUBLIC_SITE_URL}${url}`;
+
+  // Check Web Share API availability on mount
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
+      setCanUseWebShare(true);
+    }
+  }, []);
 
   const shareLinks = [
     {
@@ -54,6 +63,12 @@ export default function ShareButton({
       color: "hover:bg-green-500 hover:text-white",
     },
     {
+      name: "Telegram",
+      icon: FaTelegram,
+      url: `https://t.me/share/url?url=${encodeURIComponent(fullUrl)}&text=${encodeURIComponent(title)}`,
+      color: "hover:bg-sky-400 hover:text-white",
+    },
+    {
       name: "LinkedIn",
       icon: FiLinkedin,
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(fullUrl)}`,
@@ -68,6 +83,20 @@ export default function ShareButton({
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
+    }
+  };
+
+  const handleWebShare = async () => {
+    try {
+      await navigator.share({
+        title,
+        text: description || title,
+        url: fullUrl,
+      });
+      setIsOpen(false);
+    } catch (error) {
+      // User cancelled or error occurred
+      console.log("Share cancelled or failed:", error);
     }
   };
 
@@ -110,6 +139,20 @@ export default function ShareButton({
           {/* Share menu */}
           <div className="absolute right-0 z-50 mt-2 min-w-[200px] rounded-xl border border-gray-200 bg-white p-3 shadow-2xl dark:border-gray-700 dark:bg-gray-800">
             <div className="space-y-1">
+              {/* Web Share API (if available) */}
+              {canUseWebShare && (
+                <>
+                  <button
+                    onClick={handleWebShare}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-gray-700 transition-all hover:bg-purple-500 hover:text-white dark:text-gray-300"
+                  >
+                    <FiShare2 className="h-5 w-5" />
+                    <span className="font-medium">Share via...</span>
+                  </button>
+                  <div className="my-2 border-t border-gray-200 dark:border-gray-700" />
+                </>
+              )}
+
               {shareLinks.map((link) => (
                 <button
                   key={link.name}

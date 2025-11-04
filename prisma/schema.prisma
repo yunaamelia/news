@@ -27,15 +27,18 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts       Account[]
-  sessions       Session[]
-  watchlists     Watchlist[]
-  portfolios     Portfolio[]
-  comments       Comment[]
-  newsletters    Newsletter[]
-  bookmarks      Bookmark[]
-  readingHistory ReadingHistory[]
-  priceAlerts    PriceAlert[]
+  accounts         Account[]
+  sessions         Session[]
+  watchlists       Watchlist[]
+  portfolios       Portfolio[]
+  comments         Comment[]
+  newsletters      Newsletter[]
+  bookmarks        Bookmark[]
+  readingHistory   ReadingHistory[]
+  priceAlerts      PriceAlert[]
+  following        UserFollow[]     @relation("Follower")
+  followers        UserFollow[]     @relation("Following")
+  articleReactions ArticleReaction[]
 }
 
 enum UserRole {
@@ -99,9 +102,10 @@ model Article {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  comments       Comment[]
-  bookmarks      Bookmark[]
-  readingHistory ReadingHistory[]
+  comments         Comment[]
+  bookmarks        Bookmark[]
+  readingHistory   ReadingHistory[]
+  articleReactions ArticleReaction[]
 
   // Optimized indexes based on query patterns (Best practice from Prisma docs)
   // Single-column indexes for frequent lookups
@@ -298,4 +302,47 @@ model ReadingHistory {
   @@index([userId, updatedAt(sort: Desc)], name: "idx_reading_history_user_updated") // Recent reads
   @@index([articleId], name: "idx_reading_history_article") // Article's read count
   @@index([userId, progress], name: "idx_reading_history_user_progress") // Continue reading feature
+}
+
+// Social Features - User Follow System
+model UserFollow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId], name: "idx_follow_unique")
+  // Optimized indexes for follow queries
+  @@index([followerId], name: "idx_follow_follower") // User's following list
+  @@index([followingId], name: "idx_follow_following") // User's followers list
+  @@index([createdAt(sort: Desc)], name: "idx_follow_created") // Recent follows
+}
+
+// Social Features - Article Reactions
+model ArticleReaction {
+  id        String       @id @default(cuid())
+  userId    String
+  articleId String
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId], name: "idx_reaction_user_article_unique")
+  // Optimized indexes for reaction queries
+  @@index([articleId, type], name: "idx_reaction_article_type") // Reaction counts by type
+  @@index([userId], name: "idx_reaction_user") // User's reactions
+  @@index([createdAt(sort: Desc)], name: "idx_reaction_created") // Recent reactions
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  INSIGHTFUL
+  BULLISH
+  BEARISH
 }
