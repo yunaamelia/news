@@ -4,8 +4,11 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
+import OfflineDetector from "./components/OfflineDetector";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
 import "./globals.css";
+import { ClientErrorBoundary } from "./providers/ClientErrorBoundary";
+import { ToastProvider } from "./providers/ToastProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -66,11 +69,16 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <NextAuthProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </NextAuthProvider>
+        <ClientErrorBoundary>
+          <ToastProvider>
+            <NextAuthProvider>
+              <Navbar />
+              <main>{children}</main>
+              <Footer />
+              <OfflineDetector />
+            </NextAuthProvider>
+          </ToastProvider>
+        </ClientErrorBoundary>
         <SpeedInsights />
         <Analytics />
       </body>

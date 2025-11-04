@@ -37,22 +37,22 @@ export function Toast({
     success: {
       bg: "bg-green-500/10 border-green-500/50",
       icon: "✓",
-      iconBg: "bg-linear-to-r from-green-500 to-emerald-500",
+      iconBg: "bg-[linear-gradient(to_right,rgb(34,197,94),rgb(16,185,129))]",
     },
     error: {
       bg: "bg-red-500/10 border-red-500/50",
       icon: "✕",
-      iconBg: "bg-linear-to-r from-red-500 to-rose-500",
+      iconBg: "bg-[linear-gradient(to_right,rgb(239,68,68),rgb(244,63,94))]",
     },
     warning: {
       bg: "bg-yellow-500/10 border-yellow-500/50",
       icon: "⚠",
-      iconBg: "bg-linear-to-r from-yellow-500 to-orange-500",
+      iconBg: "bg-[linear-gradient(to_right,rgb(234,179,8),rgb(249,115,22))]",
     },
     info: {
       bg: "bg-blue-500/10 border-blue-500/50",
       icon: "ℹ",
-      iconBg: "bg-linear-to-r from-blue-500 to-purple-500",
+      iconBg: "bg-[linear-gradient(to_right,rgb(59,130,246),rgb(168,85,247))]",
     },
   };
 
@@ -69,7 +69,7 @@ export function Toast({
     >
       <div className="flex items-center gap-3">
         <div
-          className={`${style.iconBg} flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white`}
+          className={`${style.iconBg} flex size-8 shrink-0 items-center justify-center rounded-lg text-white`}
         >
           {style.icon}
         </div>

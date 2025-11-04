@@ -45,7 +45,7 @@ export default function PremiumPage() {
             <ul className="mb-10 space-y-4">
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-green-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -61,7 +61,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-green-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -77,7 +77,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-green-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -93,7 +93,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-green-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-green-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -137,7 +137,7 @@ export default function PremiumPage() {
             <ul className="mb-10 space-y-4">
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -151,7 +151,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -167,7 +167,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -183,7 +183,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -199,7 +199,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -215,7 +215,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -231,7 +231,7 @@ export default function PremiumPage() {
               </li>
               <li className="flex items-start">
                 <svg
-                  className="mt-0.5 mr-3 h-6 w-6 flex-shrink-0 text-yellow-400"
+                  className="mt-0.5 mr-3 h-6 w-6 shrink-0 text-yellow-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
