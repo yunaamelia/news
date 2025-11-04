@@ -86,7 +86,7 @@ export default function MarketTicker() {
   ];
 
   return (
-    <div className="hidden w-full overflow-hidden border-b border-gray-200/50 bg-linear-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm dark:border-[#2A3B7D]/50 dark:bg-linear-to-r dark:from-[#1a1f4d]/90 dark:via-[#1E2763]/90 dark:to-[#2A3B7D]/90">
+    <div className="w-full overflow-hidden border-b border-gray-200/50 bg-linear-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm dark:border-[#2A3B7D]/50 dark:bg-linear-to-r dark:from-[#1a1f4d]/90 dark:via-[#1E2763]/90 dark:to-[#2A3B7D]/90">
       <div className="py-3">
         {/* Scrolling Container */}
         <div className="relative flex">

@@ -148,9 +148,6 @@ const topCryptos = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white">
-      {/* Market Ticker - Top Bar */}
-      <MarketTicker />
-
       {/* Hero Section - Bold crypto-themed */}
       <section className="relative overflow-hidden bg-linear-to-br from-[#0a0e27] via-[#121b3a] to-[#0a0e27] pt-32 pb-32 text-white">
         {/* SVG Decorative Shapes */}
@@ -241,6 +238,9 @@ export default function Home() {
               berita real-time, analisis mendalam, dan data pasar saham & kripto
               dalam satu tempat.
             </p>
+
+            {/* Market Ticker */}
+            <MarketTicker />
 
             {/* CTA Buttons */}
             <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
