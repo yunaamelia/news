@@ -7,7 +7,7 @@ import {
   isMarketOpen,
   isWeekend,
   shouldRefreshStockData,
-} from "@/lib/market-hours";
+} from "@/app/lib/market-hours";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Market Hours Utility", () => {

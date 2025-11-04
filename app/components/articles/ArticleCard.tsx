@@ -5,7 +5,7 @@ import { Article } from "@/app/types";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { FiClock, FiEye } from "react-icons/fi";
 import BookmarkButton from "../ui/BookmarkButton";
 
@@ -14,7 +14,7 @@ interface ArticleCardProps {
   onBookmarkRemoved?: () => void;
 }
 
-export default function ArticleCard({
+const ArticleCard = memo(function ArticleCard({
   article,
   onBookmarkRemoved,
 }: ArticleCardProps) {
@@ -22,10 +22,14 @@ export default function ArticleCard({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
 
-  // Calculate reading time from content (if available) or estimate from excerpt
-  const readingTime = article.content
-    ? calculateReadingTime(article.content)
-    : Math.max(1, Math.ceil(article.excerpt.split(" ").length / 200));
+  // Memoize reading time calculation
+  const readingTime = useMemo(
+    () =>
+      article.content
+        ? calculateReadingTime(article.content)
+        : Math.max(1, Math.ceil(article.excerpt.split(" ").length / 200)),
+    [article.content, article.excerpt]
+  );
 
   useEffect(() => {
     if (!session) {
@@ -55,12 +59,15 @@ export default function ArticleCard({
     checkBookmark();
   }, [session, article.id]);
 
-  const handleBookmarkChange = (bookmarked: boolean) => {
-    setIsBookmarked(bookmarked);
-    if (!bookmarked && onBookmarkRemoved) {
-      onBookmarkRemoved();
-    }
-  };
+  const handleBookmarkChange = useCallback(
+    (bookmarked: boolean) => {
+      setIsBookmarked(bookmarked);
+      if (!bookmarked && onBookmarkRemoved) {
+        onBookmarkRemoved();
+      }
+    },
+    [onBookmarkRemoved]
+  );
 
   return (
     <div className="group glass-card animate-fade-in-up relative overflow-hidden rounded-2xl border border-white/10 shadow-xl shadow-black/5 transition-all duration-300 hover:scale-[1.02] hover:border-purple-500/30 hover:shadow-2xl hover:shadow-purple-500/10">
@@ -131,4 +138,6 @@ export default function ArticleCard({
       </Link>
     </div>
   );
-}
+});
+
+export default ArticleCard;

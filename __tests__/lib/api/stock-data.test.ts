@@ -6,7 +6,7 @@ import {
   getStockPrices,
   getTopIDXStocks,
   toYahooSymbol,
-} from "@/lib/api/stock-data";
+} from "@/app/lib/api/stock-data";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock yahoo-finance2 module
@@ -168,8 +168,8 @@ describe("Stock Data API Client", () => {
       expect(result).toHaveLength(20);
       expect(result[0].symbol).toBe("BBCA");
       expect(result[1].symbol).toBe("BBRI");
-      expect(result.every((stock) => stock.current_price > 0)).toBe(true);
-      expect(result.every((stock) => stock.name.length > 0)).toBe(true);
+      expect(result.every((stock: any) => stock.current_price > 0)).toBe(true);
+      expect(result.every((stock: any) => stock.name.length > 0)).toBe(true);
     });
 
     it("should maintain consistent fallback data structure", async () => {
@@ -178,7 +178,7 @@ describe("Stock Data API Client", () => {
 
       const result = await getTopIDXStocks();
 
-      result.forEach((stock) => {
+      result.forEach((stock: any) => {
         expect(stock).toHaveProperty("symbol");
         expect(stock).toHaveProperty("name");
         expect(stock).toHaveProperty("current_price");
