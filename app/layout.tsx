@@ -7,7 +7,11 @@ import Navbar from "./components/layout/Navbar";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  display: "swap", // Optimize font loading
+  fallback: ["system-ui", "arial"], // Better fallback
+});
 
 export const metadata: Metadata = {
   title: "BeritaFinansial - Platform Berita Saham & Kripto Indonesia",

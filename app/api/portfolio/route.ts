@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import prisma from "@/app/lib/prisma";
 import { authOptions } from "@/app/lib/auth";
+import { validatePortfolioData, validateId } from "@/app/lib/validators";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -76,25 +79,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { symbol, assetType, name, quantity, buyPrice, purchaseDate, notes } =
-      await req.json();
+    const rawData = await req.json();
+    const validatedData = validatePortfolioData(rawData);
 
     const portfolio = await prisma.portfolio.create({
       data: {
         userId: session.user.id,
-        symbol,
-        assetType,
-        name,
-        quantity: parseFloat(quantity),
-        buyPrice: parseFloat(buyPrice),
-        buyDate: new Date(purchaseDate),
-        notes: notes || null,
+        symbol: validatedData.symbol,
+        assetType: validatedData.assetType,
+        name: validatedData.name,
+        quantity: validatedData.quantity,
+        buyPrice: validatedData.buyPrice,
+        buyDate: validatedData.purchaseDate,
+        notes: validatedData.notes,
       },
     });
 
     return NextResponse.json(portfolio, { status: 201 });
   } catch (error) {
     console.error("Error adding to portfolio:", error);
+    
+    if (error instanceof Error && error.message.includes("required")) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Gagal menambahkan ke portfolio" },
       { status: 500 }
@@ -111,6 +122,33 @@ export async function PATCH(req: NextRequest) {
     }
 
     const { id, ...data } = await req.json();
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Verify ownership before updating
+    const existing = await prisma.portfolio.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Portfolio item tidak ditemukan" },
+        { status: 404 }
+      );
+    }
+
+    if (existing.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Forbidden: Anda tidak memiliki akses" },
+        { status: 403 }
+      );
+    }
 
     const portfolio = await prisma.portfolio.update({
       where: { id },
@@ -139,10 +177,26 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    const id = validateId(searchParams.get("id"));
 
-    if (!id) {
-      return NextResponse.json({ error: "ID tidak valid" }, { status: 400 });
+    // Verify ownership before deleting
+    const portfolio = await prisma.portfolio.findUnique({
+      where: { id },
+      select: { userId: true },
+    });
+
+    if (!portfolio) {
+      return NextResponse.json(
+        { error: "Portfolio item tidak ditemukan" },
+        { status: 404 }
+      );
+    }
+
+    if (portfolio.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Forbidden: Anda tidak memiliki akses" },
+        { status: 403 }
+      );
     }
 
     await prisma.portfolio.delete({
@@ -152,6 +206,14 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ message: "Berhasil dihapus dari portfolio" });
   } catch (error) {
     console.error("Error removing from portfolio:", error);
+    
+    if (error instanceof Error && error.message.includes("required")) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Gagal menghapus dari portfolio" },
       { status: 500 }
