@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight, FiClock, FiTrendingUp, FiUser } from "react-icons/fi";
+import CryptoMarketGrid from "../components/market/CryptoMarketGrid";
 
 export const metadata: Metadata = {
   title: "Berita Cryptocurrency Terkini - BeritaFinansial",
@@ -90,7 +91,29 @@ export default async function KriptoPage() {
             blockchain
           </p>
         </div>
+      </div>
 
+      {/* Real-time Crypto Market Data */}
+      <CryptoMarketGrid
+        cryptoIds={[
+          "bitcoin",
+          "ethereum",
+          "binancecoin",
+          "solana",
+          "ripple",
+          "cardano",
+          "dogecoin",
+          "polkadot",
+          "avalanche-2",
+          "chainlink",
+          "polygon",
+          "uniswap",
+        ]}
+        title="Harga Cryptocurrency Real-time"
+        subtitle="Data diperbarui otomatis setiap 30 detik dari CoinGecko API"
+      />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Articles Grid */}
         {articles.length === 0 ? (
           <div className="glass-card animate-fade-in rounded-2xl border border-purple-500/30 p-16 text-center shadow-2xl">

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 // import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { FiActivity, FiArrowRight, FiClock, FiUser } from "react-icons/fi";
+import CryptoMarketGrid from "../components/market/CryptoMarketGrid";
 
 export const metadata: Metadata = {
   title: "Berita Saham IDX Terkini - BeritaFinansial",
@@ -90,7 +91,26 @@ export default async function SahamPage() {
             pergerakan IHSG, dan rekomendasi investasi dari para ahli
           </p>
         </div>
+      </div>
 
+      {/* Market Data Section - Showing Crypto for now, stocks API coming soon */}
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="glass-card mb-8 rounded-2xl border border-blue-500/30 p-6 text-center">
+          <FiActivity className="mx-auto mb-2 h-8 w-8 text-blue-400" />
+          <p className="text-lg text-gray-300">
+            <span className="font-semibold text-blue-400">Coming Soon:</span>{" "}
+            Real-time data saham IDX. Saat ini menampilkan data cryptocurrency.
+          </p>
+        </div>
+      </div>
+
+      <CryptoMarketGrid
+        cryptoIds={["bitcoin", "ethereum", "binancecoin"]}
+        title="Referensi Pasar Crypto (Sementara)"
+        subtitle="Data saham IDX real-time akan segera hadir"
+      />
+
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Articles Grid */}
         {articles.length === 0 ? (
           <div className="glass-card animate-fade-in rounded-2xl border border-blue-500/30 p-16 text-center shadow-2xl">
