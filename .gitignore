@@ -42,3 +42,7 @@ next-env.d.ts
 
 /app/generated/prisma
 .env*.local
+
+# WhatsApp Web Session
+.wwebjs_auth/
+.wwebjs_cache/

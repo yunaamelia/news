@@ -4,10 +4,10 @@ import { useReportWebVitals } from "next/web-vitals";
 
 /**
  * Web Vitals Monitoring Component
- * 
+ *
  * Tracks Core Web Vitals metrics and sends them to console/analytics.
  * Best practice: Import in root layout.tsx for app-wide monitoring.
- * 
+ *
  * Metrics tracked:
  * - FCP (First Contentful Paint): Time until first DOM content renders
  * - LCP (Largest Contentful Paint): Time until largest content renders
@@ -15,7 +15,7 @@ import { useReportWebVitals } from "next/web-vitals";
  * - FID (First Input Delay): Time until first user interaction processed
  * - TTFB (Time to First Byte): Server response time
  * - INP (Interaction to Next Paint): Responsiveness to all interactions
- * 
+ *
  * Good thresholds:
  * - FCP: < 1.8s (good), 1.8-3s (needs improvement), > 3s (poor)
  * - LCP: < 2.5s (good), 2.5-4s (needs improvement), > 4s (poor)
@@ -77,7 +77,6 @@ export function WebVitals() {
     if (typeof window !== "undefined") {
       // Option 1: Send to Vercel Analytics (automatic if @vercel/analytics installed)
       // Already handled by Vercel's built-in analytics
-      
       // Option 2: Send to Google Analytics (gtag.js)
       // if (window.gtag) {
       //   window.gtag("event", metric.name, {
@@ -88,7 +87,6 @@ export function WebVitals() {
       //     non_interaction: true,
       //   });
       // }
-
       // Option 3: Send to custom analytics endpoint
       // const body = JSON.stringify(metric);
       // const url = "/api/analytics/vitals";

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
 import prisma from "@/app/lib/prisma";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +86,8 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     revalidatePath("/artikel");
     revalidatePath(`/${article.category.toLowerCase()}`);
 
-    console.log("[ISR] Cache invalidated after update:", article.slug);    return NextResponse.json(article);
+    console.log("[ISR] Cache invalidated after update:", article.slug);
+    return NextResponse.json(article);
   } catch (error) {
     console.error("Error updating article:", error);
     return NextResponse.json(
@@ -101,7 +102,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     const { slug } = await params;
 
     const article = await prisma.article.findUnique({ where: { slug } });
-    
+
     await prisma.article.delete({
       where: { slug },
     });
@@ -111,7 +112,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       revalidateTag("articles", "max"); // Stale-while-revalidate behavior
       revalidatePath("/artikel");
       revalidatePath(`/${article.category.toLowerCase()}`);
-      
+
       console.log("[ISR] Cache invalidated after delete:", slug);
     }
 

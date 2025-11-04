@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
 import prisma from "@/app/lib/prisma";
+import {
+  validateArticleData,
+  validatePagination,
+  validateSearchQuery,
+} from "@/app/lib/validators";
 import type { Prisma } from "@prisma/client";
-import { validatePagination, validateSearchQuery, validateArticleData } from "@/app/lib/validators";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +27,9 @@ export async function GET(req: NextRequest) {
     const where: Prisma.ArticleWhereInput = {
       status: "PUBLISHED",
       publishedAt: { lte: new Date() },
-      ...(category && { category: category as Prisma.ArticleWhereInput["category"] }),
+      ...(category && {
+        category: category as Prisma.ArticleWhereInput["category"],
+      }),
       ...(isPremium !== null && { isPremium }),
       ...(search && {
         OR: [
@@ -95,21 +101,18 @@ export async function POST(req: NextRequest) {
       revalidateTag("articles", "max"); // Invalidate all articles cache with stale-while-revalidate
       revalidatePath("/artikel"); // Revalidate artikel listing page
       revalidatePath(`/${article.category.toLowerCase()}`); // Revalidate category page
-      
+
       console.log("[ISR] Cache invalidated for new article:", article.slug);
     }
 
     return NextResponse.json(article, { status: 201 });
   } catch (error) {
     console.error("Error creating article:", error);
-    
+
     if (error instanceof Error && error.message.includes("required")) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    
+
     return NextResponse.json(
       { error: "Gagal membuat artikel" },
       { status: 500 }
