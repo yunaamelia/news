@@ -58,9 +58,9 @@ export default function CryptoTicker({
 
   return (
     <Tooltip content={tooltipContent} position="top" delay={100}>
-      <div className="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-200/50 bg-linear-to-br from-white via-blue-50/30 to-indigo-50/30 px-5 py-3 whitespace-nowrap transition-all duration-300 hover:scale-110 hover:border-[#3e7dff]/50 hover:shadow-xl md:gap-4 md:rounded-3xl md:px-6 md:py-4 dark:border-[#2A3B7D]/50 dark:bg-linear-to-br dark:from-[#1E2763]/90 dark:via-[#2A3B7D]/90 dark:to-[#1a1f4d]/90 dark:hover:border-[#3e7dff]/50">
+      <div className="group relative flex cursor-pointer items-center gap-3 rounded-2xl border border-gray-300/40 bg-white/95 px-5 py-3 whitespace-nowrap shadow-sm transition-all duration-300 hover:scale-105 hover:border-slate-400/60 hover:shadow-md md:gap-4 md:rounded-3xl md:px-6 md:py-4 dark:border-slate-700/50 dark:bg-slate-800/95 dark:hover:border-slate-500/60">
         {/* Icon Container */}
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-gray-100 to-gray-200 transition-all duration-300 group-hover:from-[#3e7dff]/20 group-hover:to-[#5B8DEF]/20 md:h-12 md:w-12 dark:from-[#2A3B7D] dark:to-[#1E2763]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 transition-all duration-300 group-hover:bg-slate-200 md:h-12 md:w-12 dark:bg-slate-700 dark:group-hover:bg-slate-600">
           {icon ? (
             <Image
               src={icon}
@@ -71,17 +71,17 @@ export default function CryptoTicker({
               unoptimized
             />
           ) : (
-            <FiActivity className="h-5 w-5 text-[#3e7dff]" />
+            <FiActivity className="h-5 w-5 text-slate-600 dark:text-slate-300" />
           )}
         </div>
 
         {/* Info Container */}
         <div className="flex flex-col">
-          <div className="text-sm font-bold text-gray-900 md:text-base dark:text-white">
+          <div className="text-sm font-bold text-slate-900 md:text-base dark:text-slate-50">
             {symbol}
           </div>
           {showPrice && price !== undefined && (
-            <div className="text-xs font-medium text-gray-600 md:text-sm dark:text-gray-400">
+            <div className="text-xs font-medium text-slate-600 md:text-sm dark:text-slate-400">
               {formatPrice(price)}
             </div>
           )}
@@ -92,8 +92,8 @@ export default function CryptoTicker({
           <div
             className={`ml-2 flex items-center gap-1 rounded-full px-2 py-1 text-xs font-bold md:px-3 md:py-1.5 md:text-sm ${
               isPositive
-                ? "bg-green-500/20 text-green-600 dark:bg-green-500/30 dark:text-green-400"
-                : "bg-red-500/20 text-red-600 dark:bg-red-500/30 dark:text-red-400"
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
             }`}
           >
             {isPositive ? (
