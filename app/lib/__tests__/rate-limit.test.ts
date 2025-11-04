@@ -11,6 +11,7 @@ global.Request = class Request {
   get(name: string): string | null {
     return this.headers.get(name) || null;
   }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
 describe('Rate Limit', () => {
