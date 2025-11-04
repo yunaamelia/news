@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import type { ReactionType } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import type { ReactionType } from "@prisma/client";
+import { useEffect, useState } from "react";
 
 interface ReactionCounts {
   LIKE: number;
@@ -29,7 +29,11 @@ const reactionConfig: Record<
 > = {
   LIKE: { emoji: "👍", label: "Suka", color: "hover:bg-blue-500/10" },
   LOVE: { emoji: "❤️", label: "Love", color: "hover:bg-red-500/10" },
-  INSIGHTFUL: { emoji: "💡", label: "Insightful", color: "hover:bg-yellow-500/10" },
+  INSIGHTFUL: {
+    emoji: "💡",
+    label: "Insightful",
+    color: "hover:bg-yellow-500/10",
+  },
   BULLISH: { emoji: "📈", label: "Bullish", color: "hover:bg-green-500/10" },
   BEARISH: { emoji: "📉", label: "Bearish", color: "hover:bg-red-600/10" },
 };
@@ -107,7 +111,7 @@ export function ReactionButtons({ articleSlug }: ReactionButtonsProps) {
         setReactionData((prev) => {
           if (!prev) return prev;
           const newCounts = { ...prev.counts };
-          
+
           // Decrease old reaction count if exists
           if (prev.userReaction) {
             newCounts[prev.userReaction] = Math.max(
@@ -115,7 +119,7 @@ export function ReactionButtons({ articleSlug }: ReactionButtonsProps) {
               newCounts[prev.userReaction] - 1
             );
           }
-          
+
           // Increase new reaction count
           newCounts[type] = newCounts[type] + 1;
 
@@ -160,39 +164,24 @@ export function ReactionButtons({ articleSlug }: ReactionButtonsProps) {
             key={type}
             onClick={() => handleReaction(type)}
             disabled={isLoading}
-            className={`
-              group relative flex items-center gap-1.5 px-3 py-1.5 rounded-lg
-              transition-all duration-200
-              ${isActive 
-                ? "bg-linear-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30" 
-                : "bg-white/5 border border-white/10"
-              }
-              ${config.color}
-              hover:scale-105 active:scale-95
-              disabled:opacity-50 disabled:cursor-not-allowed
-            `}
+            className={`group relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 transition-all duration-200 ${
+              isActive
+                ? "border border-blue-500/30 bg-linear-to-r from-blue-500/20 to-purple-500/20"
+                : "border border-white/10 bg-white/5"
+            } ${config.color} hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50`}
             aria-label={`${config.label} reaction`}
           >
             <span className="text-lg">{config.emoji}</span>
             {count > 0 && (
               <span
-                className={`
-                  text-sm font-medium
-                  ${isActive ? "text-white" : "text-white/70"}
-                `}
+                className={`text-sm font-medium ${isActive ? "text-white" : "text-white/70"} `}
               >
                 {count}
               </span>
             )}
-            
+
             {/* Tooltip */}
-            <span
-              className="
-                absolute -top-10 left-1/2 -translate-x-1/2
-                px-2 py-1 rounded bg-black/90 text-white text-xs whitespace-nowrap
-                opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none
-              "
-            >
+            <span className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 rounded bg-black/90 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100">
               {config.label}
             </span>
           </button>

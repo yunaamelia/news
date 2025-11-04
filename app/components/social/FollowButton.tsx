@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import Button from "@/app/components/ui/Button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Button from "@/app/components/ui/Button";
+import { useState } from "react";
 
 interface FollowButtonProps {
   targetUserId: string;
@@ -62,9 +62,7 @@ export function FollowButton({
       }
     } catch (error) {
       console.error("Error:", error);
-      alert(
-        error instanceof Error ? error.message : "An error occurred"
-      );
+      alert(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setIsLoading(false);
     }

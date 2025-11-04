@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { withRateLimit } from "@/app/lib/with-rate-limit";
 import type { ReactionType } from "@prisma/client";
+import { getServerSession } from "next-auth/next";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * GET /api/articles/[slug]/reactions

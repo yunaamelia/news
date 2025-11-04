@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
-  FiPlus,
-  FiEdit2,
-  FiTrash2,
-  FiTrendingUp,
-  FiTrendingDown,
-  FiDollarSign,
   FiActivity,
+  FiDollarSign,
+  FiEdit2,
+  FiPlus,
+  FiTrash2,
+  FiTrendingDown,
+  FiTrendingUp,
 } from "react-icons/fi";
+import { PortfolioAnalytics } from "../components/portfolio/PortfolioAnalytics";
 
 export const dynamic = "force-dynamic";
 
@@ -153,19 +154,21 @@ export default function PortfolioPage() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <FiActivity className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex min-h-screen items-center justify-center">
+        <FiActivity className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Portfolio Saya</h1>
+            <h1 className="mb-2 text-4xl font-bold text-gray-900">
+              Portfolio Saya
+            </h1>
             <p className="text-lg text-gray-600">
               Kelola dan pantau investasi Anda
             </p>
@@ -183,54 +186,67 @@ export default function PortfolioPage() {
               });
               setShowModal(true);
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg"
           >
-            <FiPlus className="w-5 h-5" />
+            <FiPlus className="h-5 w-5" />
             <span>Tambah Posisi</span>
           </button>
         </div>
 
+        {/* Portfolio Analytics */}
+        {portfolio.length > 0 && (
+          <div className="mb-8">
+            <PortfolioAnalytics />
+          </div>
+        )}
+
         {/* Stats Cards */}
         {portfolio.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <FiDollarSign className="w-5 h-5 text-blue-600" />
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-2 flex items-center gap-3">
+                <div className="rounded-lg bg-blue-100 p-2">
+                  <FiDollarSign className="h-5 w-5 text-blue-600" />
                 </div>
-                <span className="text-sm text-gray-600 font-medium">Total Investasi</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Total Investasi
+                </span>
               </div>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(stats.totalInvestment)}
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <FiActivity className="w-5 h-5 text-purple-600" />
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-2 flex items-center gap-3">
+                <div className="rounded-lg bg-purple-100 p-2">
+                  <FiActivity className="h-5 w-5 text-purple-600" />
                 </div>
-                <span className="text-sm text-gray-600 font-medium">Nilai Saat Ini</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Nilai Saat Ini
+                </span>
               </div>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(stats.currentValue)}
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-2 flex items-center gap-3">
                 <div
-                  className={`p-2 rounded-lg ${
+                  className={`rounded-lg p-2 ${
                     stats.totalProfitLoss >= 0 ? "bg-green-100" : "bg-red-100"
                   }`}
                 >
                   {stats.totalProfitLoss >= 0 ? (
-                    <FiTrendingUp className="w-5 h-5 text-green-600" />
+                    <FiTrendingUp className="h-5 w-5 text-green-600" />
                   ) : (
-                    <FiTrendingDown className="w-5 h-5 text-red-600" />
+                    <FiTrendingDown className="h-5 w-5 text-red-600" />
                   )}
                 </div>
-                <span className="text-sm text-gray-600 font-medium">Total P&L</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Total P&L
+                </span>
               </div>
               <p
                 className={`text-2xl font-bold ${
@@ -241,24 +257,30 @@ export default function PortfolioPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="rounded-2xl bg-white p-6 shadow-lg">
+              <div className="mb-2 flex items-center gap-3">
                 <div
-                  className={`p-2 rounded-lg ${
-                    stats.totalProfitLossPercent >= 0 ? "bg-green-100" : "bg-red-100"
+                  className={`rounded-lg p-2 ${
+                    stats.totalProfitLossPercent >= 0
+                      ? "bg-green-100"
+                      : "bg-red-100"
                   }`}
                 >
                   {stats.totalProfitLossPercent >= 0 ? (
-                    <FiTrendingUp className="w-5 h-5 text-green-600" />
+                    <FiTrendingUp className="h-5 w-5 text-green-600" />
                   ) : (
-                    <FiTrendingDown className="w-5 h-5 text-red-600" />
+                    <FiTrendingDown className="h-5 w-5 text-red-600" />
                   )}
                 </div>
-                <span className="text-sm text-gray-600 font-medium">Return</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Return
+                </span>
               </div>
               <p
                 className={`text-2xl font-bold ${
-                  stats.totalProfitLossPercent >= 0 ? "text-green-600" : "text-red-600"
+                  stats.totalProfitLossPercent >= 0
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {stats.totalProfitLossPercent >= 0 ? "+" : ""}
@@ -270,29 +292,29 @@ export default function PortfolioPage() {
 
         {/* Portfolio Table */}
         {portfolio.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FiActivity className="w-8 h-8 text-gray-400" />
+          <div className="rounded-2xl bg-white p-12 text-center shadow-lg">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <FiActivity className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="mb-2 text-xl font-semibold text-gray-900">
               Portfolio masih kosong
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="mb-6 text-gray-600">
               Mulai catat investasi Anda untuk memantau performa
             </p>
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all hover:bg-blue-700"
             >
-              <FiPlus className="w-5 h-5" />
+              <FiPlus className="h-5 w-5" />
               <span>Tambah Posisi</span>
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase">
                       Aset
@@ -319,14 +341,19 @@ export default function PortfolioPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {portfolio.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={item.id}
+                      className="transition-colors hover:bg-gray-50"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-gray-900">{item.symbol}</span>
+                              <span className="font-bold text-gray-900">
+                                {item.symbol}
+                              </span>
                               <span
-                                className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                                className={`rounded px-2 py-0.5 text-xs font-semibold ${
                                   item.assetType === "SAHAM"
                                     ? "bg-blue-100 text-blue-700"
                                     : "bg-purple-100 text-purple-700"
@@ -346,30 +373,38 @@ export default function PortfolioPage() {
                         {formatCurrency(item.buyPrice)}
                       </td>
                       <td className="px-6 py-4 text-right text-gray-900">
-                        {item.currentPrice ? formatCurrency(item.currentPrice) : "-"}
+                        {item.currentPrice
+                          ? formatCurrency(item.currentPrice)
+                          : "-"}
                       </td>
                       <td className="px-6 py-4 text-right font-semibold text-gray-900">
-                        {item.totalValue ? formatCurrency(item.totalValue) : "-"}
+                        {item.totalValue
+                          ? formatCurrency(item.totalValue)
+                          : "-"}
                       </td>
                       <td className="px-6 py-4 text-right">
                         {item.profitLoss !== undefined ? (
                           <div className="flex flex-col items-end gap-1">
                             <span
                               className={`font-bold ${
-                                item.profitLoss >= 0 ? "text-green-600" : "text-red-600"
+                                item.profitLoss >= 0
+                                  ? "text-green-600"
+                                  : "text-red-600"
                               }`}
                             >
                               {formatCurrency(item.profitLoss)}
                             </span>
                             <span
                               className={`inline-flex items-center gap-1 text-sm font-semibold ${
-                                item.profitLoss >= 0 ? "text-green-600" : "text-red-600"
+                                item.profitLoss >= 0
+                                  ? "text-green-600"
+                                  : "text-red-600"
                               }`}
                             >
                               {item.profitLoss >= 0 ? (
-                                <FiTrendingUp className="w-4 h-4" />
+                                <FiTrendingUp className="h-4 w-4" />
                               ) : (
-                                <FiTrendingDown className="w-4 h-4" />
+                                <FiTrendingDown className="h-4 w-4" />
                               )}
                               {item.profitLossPercent?.toFixed(2)}%
                             </span>
@@ -382,15 +417,15 @@ export default function PortfolioPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEdit(item)}
-                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                            className="rounded-lg p-2 text-gray-400 transition-all hover:bg-blue-50 hover:text-blue-600"
                           >
-                            <FiEdit2 className="w-4 h-4" />
+                            <FiEdit2 className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(item.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                            className="rounded-lg p-2 text-gray-400 transition-all hover:bg-red-50 hover:text-red-600"
                           >
-                            <FiTrash2 className="w-4 h-4" />
+                            <FiTrash2 className="h-4 w-4" />
                           </button>
                         </div>
                       </td>
@@ -404,14 +439,14 @@ export default function PortfolioPage() {
 
         {/* Add/Edit Modal */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
+              <h3 className="mb-6 text-2xl font-bold text-gray-900">
                 {editingId ? "Edit Posisi" : "Tambah Posisi Baru"}
               </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
                     Tipe Aset
                   </label>
                   <select
@@ -422,7 +457,7 @@ export default function PortfolioPage() {
                         assetType: e.target.value as "SAHAM" | "KRIPTO",
                       })
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="SAHAM">Saham</option>
                     <option value="KRIPTO">Cryptocurrency</option>
@@ -431,38 +466,43 @@ export default function PortfolioPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                       Symbol
                     </label>
                     <input
                       type="text"
                       value={formData.symbol}
                       onChange={(e) =>
-                        setFormData({ ...formData, symbol: e.target.value.toUpperCase() })
+                        setFormData({
+                          ...formData,
+                          symbol: e.target.value.toUpperCase(),
+                        })
                       }
                       placeholder="BBCA"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                       Nama
                     </label>
                     <input
                       type="text"
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       placeholder="Bank BCA"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                       Jumlah
                     </label>
                     <input
@@ -474,11 +514,11 @@ export default function PortfolioPage() {
                       }
                       placeholder="100"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-medium text-gray-700">
                       Harga Beli
                     </label>
                     <input
@@ -490,13 +530,13 @@ export default function PortfolioPage() {
                       }
                       placeholder="8500"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-700">
                     Tanggal Beli
                   </label>
                   <input
@@ -506,7 +546,7 @@ export default function PortfolioPage() {
                       setFormData({ ...formData, purchaseDate: e.target.value })
                     }
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
@@ -517,13 +557,13 @@ export default function PortfolioPage() {
                       setShowModal(false);
                       setEditingId(null);
                     }}
-                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all"
+                    className="flex-1 rounded-xl border border-gray-300 px-4 py-3 font-semibold text-gray-700 transition-all hover:bg-gray-50"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all"
+                    className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white transition-all hover:bg-blue-700"
                   >
                     {editingId ? "Simpan" : "Tambah"}
                   </button>

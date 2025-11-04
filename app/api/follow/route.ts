@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { withRateLimit } from "@/app/lib/with-rate-limit";
+import { getServerSession } from "next-auth/next";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * GET /api/follow
@@ -86,10 +86,22 @@ export async function GET(request: NextRequest) {
     });
 
     // Extract user data based on type
-    const users = follows.map((follow: {
-      follower: { id: string; name: string | null; email: string; image: string | null };
-      following: { id: string; name: string | null; email: string; image: string | null };
-    }) => (type === "followers" ? follow.follower : follow.following));
+    const users = follows.map(
+      (follow: {
+        follower: {
+          id: string;
+          name: string | null;
+          email: string;
+          image: string | null;
+        };
+        following: {
+          id: string;
+          name: string | null;
+          email: string;
+          image: string | null;
+        };
+      }) => (type === "followers" ? follow.follower : follow.following)
+    );
 
     return NextResponse.json({
       data: users,

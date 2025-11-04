@@ -70,7 +70,8 @@
 
   // Prisma
   "[prisma]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Prisma.prisma"
   },
 
   // JavaScript/TypeScript

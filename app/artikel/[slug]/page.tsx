@@ -1,3 +1,4 @@
+import { ReactionButtons } from "@/app/components/social/ReactionButtons";
 import prisma from "@/app/lib/prisma";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -10,7 +11,6 @@ import {
   FiTag,
   FiUser,
 } from "react-icons/fi";
-import { ReactionButtons } from "@/app/components/social/ReactionButtons";
 
 export const revalidate = 300; // ISR: revalidate every 5 minutes
 export const dynamic = "force-dynamic"; // Always render dynamically

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FaWhatsapp, FaTelegram } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaTelegram, FaWhatsapp } from "react-icons/fa";
 import {
   FiCheck,
   FiCopy,
