@@ -89,9 +89,9 @@ export default function MarketTicker() {
     <div className="w-screen overflow-hidden border border-gray-200/50 bg-linear-to-r from-blue-50/80 via-indigo-50/80 to-purple-50/80 shadow-lg backdrop-blur-sm md:py-6 md:text-lg lg:py-8 lg:text-xl dark:border-[#2A3B7D]/50 dark:bg-linear-to-r dark:from-[#1a1f4d]/90 dark:via-[#1E2763]/90 dark:to-[#2A3B7D]/90">
       <div className="py-3 md:py-0">
         {/* Scrolling Container */}
-        <div className="relative flex">
+        <div className="relative flex overflow-visible">
           {/* Animate infinite scroll - duplicate content for seamless loop */}
-          <div className="animate-scroll flex gap-4">
+          <div className="animate-scroll flex gap-4 md:gap-6">
             {allAssets.map((asset, idx) => (
               <CryptoTicker
                 key={`${asset.symbol}-${idx}`}
