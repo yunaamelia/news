@@ -58,7 +58,10 @@ export default withAuth(
 
       // Handle OPTIONS preflight
       if (req.method === "OPTIONS") {
-        return new NextResponse(null, { status: 200, headers: response.headers });
+        return new NextResponse(null, {
+          status: 200,
+          headers: response.headers,
+        });
       }
     }
 
