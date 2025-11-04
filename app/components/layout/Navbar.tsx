@@ -55,8 +55,8 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden grow items-center justify-center space-x-2 lg:flex">
+          {/* Desktop Navigation - Temporarily Hidden */}
+          <div className="hidden grow items-center justify-center space-x-2">
             <Link
               href="/saham"
               className="group flex items-center gap-2 rounded-xl px-4 py-2.5 text-gray-300 transition-all duration-300 hover:bg-linear-to-r hover:from-blue-500/20 hover:to-blue-600/20 hover:text-blue-400"
