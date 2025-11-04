@@ -46,3 +46,6 @@ next-env.d.ts
 # WhatsApp Web Session
 .wwebjs_auth/
 .wwebjs_cache/
+
+# Development Tools (not for production)
+.dev-tools/
