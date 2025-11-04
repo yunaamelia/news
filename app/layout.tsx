@@ -2,10 +2,12 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import {
+  MarketStatusBanner,
+  OfflineDetector,
+} from "./components/DynamicComponents";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
-import MarketStatusBanner from "./components/market/MarketStatusBanner";
-import OfflineDetector from "./components/OfflineDetector";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
 import "./globals.css";
 import { ClientErrorBoundary } from "./providers/ClientErrorBoundary";

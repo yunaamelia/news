@@ -1,0 +1,93 @@
+
+> berita-finansial@0.1.0 build:analyze
+> cross-env ANALYZE=true npm run build
+
+
+> berita-finansial@0.1.0 build
+> prisma generate && next build
+
+[dotenv@17.2.3] injecting env (25) from .env.local -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+warn The configuration property `package.json#prisma` is deprecated and will be removed in Prisma 7. Please migrate to a Prisma config file (e.g., `prisma.config.ts`).
+For more information, see: https://pris.ly/prisma-config
+
+Loaded Prisma config from prisma.config.ts.
+
+warn The Prisma config file in prisma.config.ts overrides the deprecated `package.json#prisma` property in package.json.
+  For more information, see: https://pris.ly/prisma-config
+
+Prisma config detected, skipping environment variable loading.
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.18.0) to ./node_modules/@prisma/client in 197ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+The Next Bundle Analyzer is not compatible with Turbopack builds yet, no report will be generated.
+
+To run this analysis pass the `--webpack` flag to `next build`
+   ▲ Next.js 16.0.1 (Turbopack)
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     · optimizePackageImports
+
+ ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+   Creating an optimized production build ...
+The Next Bundle Analyzer is not compatible with Turbopack builds yet, no report will be generated.
+
+To run this analysis pass the `--webpack` flag to `next build`
+ ✓ Compiled successfully in 24.6s
+   Running TypeScript ...
+   Collecting page data ...
+   Generating static pages (0/23) ...
+   Generating static pages (5/23) 
+   Generating static pages (11/23) 
+   Generating static pages (17/23) 
+ ✓ Generating static pages (23/23) in 1461.4ms
+   Finalizing page optimization ...
+
+Route (app)                  Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ○ /analisis                        5m      1y
+├ ƒ /api/articles
+├ ƒ /api/articles/[slug]
+├ ƒ /api/articles/comments
+├ ƒ /api/articles/search
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/register
+├ ƒ /api/bookmarks
+├ ƒ /api/market
+├ ƒ /api/market/[symbol]
+├ ƒ /api/newsletter
+├ ƒ /api/portfolio
+├ ƒ /api/portfolio/[id]
+├ ƒ /api/reading-history
+├ ƒ /api/stocks
+├ ƒ /api/watchlist
+├ ƒ /api/watchlist/[id]
+├ ○ /artikel
+├ ƒ /artikel/[slug]
+├ ○ /auth/signin
+├ ○ /auth/signup
+├ ○ /bookmarks
+├ ○ /edukasi                         5m      1y
+├ ○ /kripto                          5m      1y
+├ ○ /manifest.webmanifest
+├ ○ /market
+├ ○ /portfolio
+├ ○ /premium
+├ ○ /regulasi                        5m      1y
+├ ○ /robots.txt
+├ ƒ /saham
+├ ○ /search
+├ ○ /sitemap.xml
+└ ○ /watchlist
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

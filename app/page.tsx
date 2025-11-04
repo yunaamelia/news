@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   FiActivity,
@@ -10,7 +11,21 @@ import {
 } from "react-icons/fi";
 import ArticleCard from "./components/articles/ArticleCard";
 import MarketTicker from "./components/market/MarketTicker";
-import MarketOverview from "./components/MarketOverview";
+
+// Lazy load MarketOverview (below fold)
+const MarketOverview = dynamic(() => import("./components/MarketOverview"), {
+  loading: () => (
+    <div className="animate-pulse rounded-2xl bg-gray-800/50 p-8">
+      <div className="mb-4 h-8 w-48 rounded bg-gray-700"></div>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-32 rounded-xl bg-gray-700"></div>
+        ))}
+      </div>
+    </div>
+  ),
+  ssr: true,
+});
 
 // Mock data untuk demo
 const featuredArticle = {
