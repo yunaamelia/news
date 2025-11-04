@@ -240,7 +240,9 @@ export default function Home() {
             </p>
 
             {/* Market Ticker */}
-            <MarketTicker />
+            <div className="mx-auto mb-8 w-full max-w-7xl overflow-hidden rounded-xl">
+              <MarketTicker />
+            </div>
 
             {/* CTA Buttons */}
             <div className="animation-delay-300 animate-fade-in-up mb-16 flex flex-col justify-center gap-6 sm:flex-row">
