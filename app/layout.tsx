@@ -7,7 +7,7 @@ import Navbar from "./components/layout/Navbar";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
 import "./globals.css";
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   display: "swap", // Optimize font loading
   fallback: ["system-ui", "arial"], // Better fallback
@@ -48,14 +48,18 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  // Read both 'theme' and legacy 'darkMode' to avoid flicker and ensure consistency
                   var t = localStorage.getItem('theme');
                   var d = localStorage.getItem('darkMode');
                   var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
                   var isDark = t === 'dark' || (t === null && (d === 'true' || (d === null && prefers)));
-                  if (isDark) document.documentElement.classList.add('dark');
-                  else document.documentElement.classList.remove('dark');
-                } catch (e) {}
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {
+                  console.error('Dark mode init error:', e);
+                }
               })();
             `,
           }}
