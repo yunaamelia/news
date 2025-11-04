@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
+import MarketStatusBanner from "./components/market/MarketStatusBanner";
 import OfflineDetector from "./components/OfflineDetector";
 import NextAuthProvider from "./components/providers/NextAuthProvider";
 import "./globals.css";
@@ -76,6 +77,7 @@ export default function RootLayout({
               <main>{children}</main>
               <Footer />
               <OfflineDetector />
+              <MarketStatusBanner />
             </NextAuthProvider>
           </ToastProvider>
         </ClientErrorBoundary>

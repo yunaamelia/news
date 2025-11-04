@@ -28,12 +28,16 @@ export default function MarketTicker() {
       try {
         setIsLoading(true);
 
-        // Fetch crypto and stock data in parallel via API routes
+        // Always fetch crypto (24/7 market)
+        // Only fetch stocks during market hours or use cached data
+        const cryptoPromise = getCryptoPrices();
+        const stockPromise = fetch(
+          `/api/stocks?symbols=${TICKER_STOCKS.join(",")}`
+        ).then((r) => r.json());
+
         const [cryptoResponse, stockResponse] = await Promise.all([
-          getCryptoPrices(),
-          fetch(`/api/stocks?symbols=${TICKER_STOCKS.join(",")}`).then((r) =>
-            r.json()
-          ),
+          cryptoPromise,
+          stockPromise,
         ]);
 
         if (mounted) {
@@ -56,6 +60,7 @@ export default function MarketTicker() {
     fetchData();
 
     // Auto-refresh setiap 30 detik
+    // Stock API will use cached data when market closed
     const interval = setInterval(fetchData, 30000);
 
     return () => {
