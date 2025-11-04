@@ -1,0 +1,395 @@
+{
+  "project": {
+    "name": "Berita Finansial",
+    "type": "fintech-news-platform",
+    "description": "Platform berita keuangan Indonesia dengan analisis pasar saham dan kripto real-time",
+    "version": "1.0.0",
+    "status": "production",
+    "repository": "yunaamelia/news",
+    "license": "MIT"
+  },
+  "stack": {
+    "framework": "Next.js 16.0.1",
+    "runtime": "React 19",
+    "language": "TypeScript 5+",
+    "styling": "Tailwind CSS v4",
+    "database": "PostgreSQL (Neon)",
+    "orm": "Prisma 6",
+    "auth": "NextAuth.js",
+    "deployment": "Vercel",
+    "bundler": "Turbopack"
+  },
+  "architecture": {
+    "pattern": "App Router (Server Components First)",
+    "rendering": "React Server Components + Client Components",
+    "routing": "File-based routing (app/)",
+    "api": "Next.js API Routes (app/api/)",
+    "data_fetching": "Server Components + API Routes",
+    "caching": "ISR (5 min revalidate) + MarketDataCache model",
+    "state_management": "Server State + URL State + Context API",
+    "authentication": "Session-based (NextAuth + Prisma Adapter)"
+  },
+  "standards": {
+    "linting": "ESLint (next/core-web-vitals)",
+    "formatting": "Prettier",
+    "typing": "TypeScript Strict Mode",
+    "testing": "Jest + Playwright (planned)",
+    "coverage_target": "70%+",
+    "code_style": "Airbnb TypeScript",
+    "commit_convention": "Conventional Commits"
+  },
+  "performance": {
+    "lighthouse": {
+      "performance": 95,
+      "accessibility": 95,
+      "best_practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "bundle_size": "< 300KB first load",
+      "page_load": "< 2s",
+      "time_to_interactive": "< 3s",
+      "first_contentful_paint": "< 1.5s"
+    },
+    "optimizations": [
+      "React Compiler enabled",
+      "Image optimization (Next/Image)",
+      "Code splitting (dynamic imports)",
+      "ISR for category pages",
+      "Database query caching",
+      "Client-side minimal JS"
+    ]
+  },
+  "features": {
+    "articles": {
+      "description": "News articles with categories",
+      "categories": ["SAHAM", "KRIPTO", "EDUKASI", "ANALISIS", "REGULASI"],
+      "filters": ["category", "status", "featured"],
+      "pagination": true,
+      "comments": true
+    },
+    "market": {
+      "description": "Real-time market data",
+      "assets": ["stocks", "crypto"],
+      "cache_ttl": "5 minutes",
+      "providers": {
+        "stocks": "Mock data (placeholder)",
+        "crypto": "CoinGecko API"
+      }
+    },
+    "authentication": {
+      "providers": ["credentials", "google"],
+      "features": ["login", "register", "logout", "session"],
+      "protected_routes": ["/watchlist", "/portfolio", "/bookmarks", "/premium"]
+    },
+    "watchlist": {
+      "description": "User watchlist for stocks and crypto",
+      "auth_required": true,
+      "asset_types": ["SAHAM", "KRIPTO"]
+    },
+    "portfolio": {
+      "description": "Portfolio tracking",
+      "auth_required": true,
+      "features": ["buy", "sell", "profit_loss"]
+    },
+    "bookmarks": {
+      "description": "Bookmark articles",
+      "auth_required": true
+    },
+    "premium": {
+      "description": "Premium membership",
+      "tiers": ["basic", "premium", "pro"],
+      "features": ["exclusive_articles", "advanced_analytics"]
+    },
+    "dark_mode": {
+      "description": "Full dark mode support",
+      "implementation": "class-based (.dark)",
+      "persistence": "localStorage"
+    }
+  },
+  "api_endpoints": {
+    "articles": {
+      "list": "GET /api/articles",
+      "get": "GET /api/articles/[slug]",
+      "search": "GET /api/articles/search",
+      "comments": "POST /api/articles/comments"
+    },
+    "market": {
+      "list": "GET /api/market",
+      "get": "GET /api/market/[symbol]"
+    },
+    "watchlist": {
+      "list": "GET /api/watchlist",
+      "add": "POST /api/watchlist",
+      "remove": "DELETE /api/watchlist/[id]"
+    },
+    "portfolio": {
+      "list": "GET /api/portfolio",
+      "add": "POST /api/portfolio",
+      "update": "PUT /api/portfolio/[id]",
+      "remove": "DELETE /api/portfolio/[id]"
+    },
+    "bookmarks": {
+      "list": "GET /api/bookmarks",
+      "add": "POST /api/bookmarks",
+      "remove": "DELETE /api/bookmarks"
+    },
+    "auth": {
+      "signin": "POST /api/auth/signin",
+      "signout": "POST /api/auth/signout",
+      "register": "POST /api/auth/register",
+      "session": "GET /api/auth/session"
+    }
+  },
+  "database": {
+    "provider": "PostgreSQL",
+    "hosting": "Neon (serverless)",
+    "connection_pooling": true,
+    "models": [
+      {
+        "name": "User",
+        "fields": [
+          "id",
+          "email",
+          "name",
+          "image",
+          "emailVerified",
+          "createdAt",
+          "updatedAt"
+        ],
+        "relations": [
+          "accounts",
+          "sessions",
+          "watchlist",
+          "portfolio",
+          "bookmarks"
+        ]
+      },
+      {
+        "name": "Article",
+        "fields": [
+          "id",
+          "slug",
+          "title",
+          "content",
+          "excerpt",
+          "category",
+          "status",
+          "featured",
+          "createdAt",
+          "updatedAt"
+        ],
+        "relations": ["author", "comments"]
+      },
+      {
+        "name": "Watchlist",
+        "fields": ["id", "userId", "symbol", "name", "assetType", "createdAt"],
+        "relations": ["user"]
+      },
+      {
+        "name": "Portfolio",
+        "fields": [
+          "id",
+          "userId",
+          "symbol",
+          "quantity",
+          "buyPrice",
+          "currentPrice",
+          "assetType",
+          "createdAt",
+          "updatedAt"
+        ],
+        "relations": ["user"]
+      },
+      {
+        "name": "MarketDataCache",
+        "fields": [
+          "symbol",
+          "assetType",
+          "data",
+          "expiresAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "composite_key": ["symbol", "assetType"]
+      }
+    ],
+    "enums": [
+      {
+        "name": "AssetType",
+        "values": ["SAHAM", "KRIPTO"]
+      },
+      {
+        "name": "ArticleCategory",
+        "values": ["SAHAM", "KRIPTO", "EDUKASI", "ANALISIS", "REGULASI"]
+      },
+      {
+        "name": "ArticleStatus",
+        "values": ["DRAFT", "PUBLISHED", "ARCHIVED"]
+      }
+    ]
+  },
+  "folder_structure": {
+    "app": {
+      "description": "Next.js App Router",
+      "subdirectories": {
+        "api": "API routes (server-side endpoints)",
+        "components": "React components (UI building blocks)",
+        "lib": "Utility functions (auth, prisma, market-data)",
+        "types": "TypeScript type definitions",
+        "(pages)": "Route pages (saham, kripto, edukasi, etc)"
+      }
+    },
+    "prisma": {
+      "description": "Database schema and migrations",
+      "files": ["schema.prisma", "seed.ts"]
+    },
+    "public": {
+      "description": "Static assets",
+      "subdirectories": ["icons", "images", "shapes"]
+    },
+    "scripts": {
+      "description": "Utility scripts",
+      "files": ["setup-vercel.sh", "test-db-connection.ts"]
+    }
+  },
+  "key_files": {
+    "app/lib/auth.ts": {
+      "purpose": "Authentication configuration (NextAuth)",
+      "exports": ["authOptions", "getServerSession"],
+      "critical": "DO NOT import authOptions from route handlers"
+    },
+    "app/lib/prisma.ts": {
+      "purpose": "Prisma client singleton (Neon adapter)",
+      "exports": ["prisma"],
+      "critical": "Use this singleton, don't create new PrismaClient"
+    },
+    "app/lib/market-data.ts": {
+      "purpose": "Market data fetching with cache (5 min TTL)",
+      "exports": ["getMarketData", "getCryptoData"],
+      "critical": "Always use cache layer, fallback to mock data"
+    },
+    "prisma/schema.prisma": {
+      "purpose": "Database schema definition",
+      "critical": "Use proper enums, run 'prisma generate' after changes"
+    },
+    "next.config.ts": {
+      "purpose": "Next.js configuration",
+      "critical": "React Compiler enabled, Turbopack for dev"
+    }
+  },
+  "common_patterns": {
+    "server_component": {
+      "description": "Default component type, can access DB directly",
+      "example": "export default async function Page() { const data = await prisma.article.findMany(); return <List data={data} />; }"
+    },
+    "client_component": {
+      "description": "For hooks, events, browser APIs",
+      "example": "'use client';\nimport { useState } from 'react';\nexport default function Interactive() { const [state, setState] = useState(); ... }"
+    },
+    "api_route_auth": {
+      "description": "Protected API route pattern",
+      "example": "const session = await getServerSession(authOptions);\nif (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });"
+    },
+    "api_route_pagination": {
+      "description": "Standard pagination pattern",
+      "example": "const page = parseInt(searchParams.get('page') || '1');\nconst limit = parseInt(searchParams.get('limit') || '10');\nconst skip = (page - 1) * limit;"
+    }
+  },
+  "testing_requirements": {
+    "before_push": [
+      "npm run lint (must pass with 0 errors)",
+      "npx tsc --noEmit (must pass with 0 type errors)",
+      "npm run build (must succeed)",
+      "Verify no console errors",
+      "Test dark mode consistency"
+    ],
+    "unit_tests": {
+      "framework": "Jest",
+      "coverage_target": "70%",
+      "priority": ["lib functions", "utils", "API routes"]
+    },
+    "e2e_tests": {
+      "framework": "Playwright",
+      "priority": [
+        "auth flow",
+        "article CRUD",
+        "market data",
+        "watchlist/portfolio"
+      ]
+    }
+  },
+  "security_checklist": [
+    "User input validated?",
+    "Authentication checked (protected routes)?",
+    "No sensitive data exposed?",
+    "Prisma parameterization (SQL injection safe)?",
+    "Environment variables properly scoped?",
+    "Rate limiting implemented?",
+    "CSRF protection enabled?",
+    "XSS prevention (sanitized inputs)?"
+  ],
+  "optimization_guidelines": {
+    "components": [
+      "Server Components by default",
+      "Client Components only when needed (hooks, events)",
+      "Use 'use client' directive sparingly",
+      "Minimize client JavaScript bundle"
+    ],
+    "images": [
+      "Use Next/Image for optimization",
+      "Define width/height for CLS",
+      "Use appropriate formats (WebP, AVIF)",
+      "Lazy load below fold images"
+    ],
+    "database": [
+      "Use ISR for category pages (revalidate = 300)",
+      "Cache market data (TTL 5 min)",
+      "Avoid N+1 queries (use include/select)",
+      "Index frequently queried fields"
+    ],
+    "bundle": [
+      "Dynamic imports for large components",
+      "Tree shaking (no default exports for utils)",
+      "Remove unused dependencies",
+      "Analyze bundle size regularly"
+    ]
+  },
+  "deployment": {
+    "platform": "Vercel",
+    "environments": {
+      "production": {
+        "url": "https://berita-finansial.vercel.app",
+        "branch": "main"
+      },
+      "preview": {
+        "url": "https://berita-finansial-*.vercel.app",
+        "branch": "*"
+      }
+    },
+    "build_command": "npm run build",
+    "output_directory": ".next",
+    "install_command": "npm ci",
+    "dev_command": "npm run dev",
+    "framework": "nextjs"
+  },
+  "documentation": {
+    "main": "README.md",
+    "setup": "GETTING_STARTED.md",
+    "architecture": "PROJECT_SUMMARY.md",
+    "deployment": "DEPLOYMENT.md",
+    "roadmap": "DEV_ROADMAP.md",
+    "agent": {
+      "instructions": ".github/agent-instructions.md",
+      "quick_start": ".github/agent-quick-start.md",
+      "templates": ".github/agent-templates.md",
+      "env_setup": ".github/GITHUB_ENV_SETUP.md"
+    }
+  },
+  "metadata": {
+    "created": "2025-11-03",
+    "last_updated": "2025-11-04",
+    "version": "1.0.0",
+    "maintained_by": "Berita Finansial Team"
+  }
+}
