@@ -1,6 +1,6 @@
-import prisma from "@/app/lib/prisma";
-import { getMarketData, getCryptoData } from "@/app/lib/market-data";
 import { sendPriceAlertEmail } from "@/app/lib/email";
+import { getCryptoData, getMarketData } from "@/app/lib/market-data";
+import prisma from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -74,7 +74,8 @@ export async function GET(req: Request) {
           case "EQUALS":
             // Allow 0.5% tolerance for EQUALS
             const tolerance = alert.targetPrice * 0.005;
-            conditionMet = Math.abs(currentPrice - alert.targetPrice) <= tolerance;
+            conditionMet =
+              Math.abs(currentPrice - alert.targetPrice) <= tolerance;
             break;
         }
 
@@ -96,7 +97,10 @@ export async function GET(req: Request) {
             });
 
             if (!emailResult.success) {
-              console.error(`[CRON] Failed to send email for alert ${alert.id}:`, emailResult.error);
+              console.error(
+                `[CRON] Failed to send email for alert ${alert.id}:`,
+                emailResult.error
+              );
             }
           }
 

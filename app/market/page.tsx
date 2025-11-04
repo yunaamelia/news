@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { FiTrendingUp, FiTrendingDown, FiRefreshCw, FiSearch } from "react-icons/fi";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  FiRefreshCw,
+  FiSearch,
+  FiTrendingDown,
+  FiTrendingUp,
+} from "react-icons/fi";
 
 interface MarketData {
   symbol: string;
@@ -62,23 +68,25 @@ export default function MarketPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-gray-50 to-white pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Data Pasar Real-Time</h1>
+          <h1 className="mb-3 text-4xl font-bold text-gray-900">
+            Data Pasar Real-Time
+          </h1>
           <p className="text-lg text-gray-600">
             Pantau pergerakan harga saham Indonesia dan cryptocurrency terkini
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="mb-8 rounded-2xl bg-white p-6 shadow-lg">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             {/* Tabs */}
             <div className="flex gap-2">
               <button
                 onClick={() => setActiveTab("stocks")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                className={`rounded-xl px-6 py-3 font-semibold transition-all ${
                   activeTab === "stocks"
                     ? "bg-blue-600 text-white shadow-md"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -88,7 +96,7 @@ export default function MarketPage() {
               </button>
               <button
                 onClick={() => setActiveTab("crypto")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                className={`rounded-xl px-6 py-3 font-semibold transition-all ${
                   activeTab === "crypto"
                     ? "bg-purple-600 text-white shadow-md"
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -99,38 +107,40 @@ export default function MarketPage() {
             </div>
 
             {/* Search & Refresh */}
-            <div className="flex gap-3 w-full md:w-auto">
+            <div className="flex w-full gap-3 md:w-auto">
               <div className="relative flex-1 md:w-64">
-                <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FiSearch className="absolute top-1/2 left-3 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Cari symbol atau nama..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-xl border border-gray-300 py-3 pr-4 pl-10 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <button
                 onClick={fetchMarketData}
                 disabled={loading}
-                className="px-4 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all disabled:opacity-50"
+                className="rounded-xl bg-gray-100 px-4 py-3 transition-all hover:bg-gray-200 disabled:opacity-50"
               >
-                <FiRefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
+                <FiRefreshCw
+                  className={`h-5 w-5 ${loading ? "animate-spin" : ""}`}
+                />
               </button>
             </div>
           </div>
         </div>
 
         {/* Market Data Table */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="overflow-hidden rounded-2xl bg-white shadow-lg">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <FiRefreshCw className="w-8 h-8 animate-spin text-blue-600" />
+              <FiRefreshCw className="h-8 w-8 animate-spin text-blue-600" />
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+                <thead className="border-b border-gray-200 bg-gray-50">
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                       Symbol
@@ -153,10 +163,15 @@ export default function MarketPage() {
                   {filteredData.map((item) => (
                     <tr
                       key={item.symbol}
-                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                      className="transition-colors hover:bg-gray-50"
                     >
                       <td className="px-6 py-4">
-                        <div className="font-bold text-gray-900">{item.symbol}</div>
+                        <Link
+                          href={`/market/${item.symbol.toLowerCase()}?type=${activeTab === "stocks" ? "saham" : "kripto"}`}
+                          className="font-bold text-blue-600 hover:text-blue-800"
+                        >
+                          {item.symbol}
+                        </Link>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-gray-700">{item.name}</div>
@@ -170,16 +185,16 @@ export default function MarketPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div
-                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg font-semibold ${
+                          className={`inline-flex items-center gap-1 rounded-lg px-3 py-1 font-semibold ${
                             item.changePercent >= 0
                               ? "bg-green-100 text-green-700"
                               : "bg-red-100 text-red-700"
                           }`}
                         >
                           {item.changePercent >= 0 ? (
-                            <FiTrendingUp className="w-4 h-4" />
+                            <FiTrendingUp className="h-4 w-4" />
                           ) : (
-                            <FiTrendingDown className="w-4 h-4" />
+                            <FiTrendingDown className="h-4 w-4" />
                           )}
                           <span>
                             {item.changePercent >= 0 ? "+" : ""}
@@ -197,7 +212,7 @@ export default function MarketPage() {
                 </tbody>
               </table>
               {filteredData.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
+                <div className="py-12 text-center text-gray-500">
                   Tidak ada data yang cocok dengan pencarian
                 </div>
               )}
@@ -206,10 +221,10 @@ export default function MarketPage() {
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+        <div className="mt-8 rounded-xl border border-yellow-200 bg-yellow-50 p-4">
           <p className="text-sm text-yellow-800">
-            <strong>Catatan:</strong> Data harga diperbarui setiap 60 detik. Gunakan untuk
-            referensi saja, bukan sebagai rekomendasi investasi.
+            <strong>Catatan:</strong> Data harga diperbarui setiap 60 detik.
+            Gunakan untuk referensi saja, bukan sebagai rekomendasi investasi.
           </p>
         </div>
       </div>

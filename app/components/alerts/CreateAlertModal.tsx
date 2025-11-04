@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiBell, FiTrendingUp, FiTrendingDown } from "react-icons/fi";
 import Button from "@/app/components/ui/Button";
 import { useToast } from "@/app/providers/ToastProvider";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { FiBell, FiTrendingDown, FiTrendingUp, FiX } from "react-icons/fi";
 
 interface CreateAlertModalProps {
   isOpen: boolean;
@@ -23,14 +23,18 @@ export default function CreateAlertModal({
   currentPrice,
   onAlertCreated,
 }: CreateAlertModalProps) {
-  const [condition, setCondition] = useState<"ABOVE" | "BELOW" | "EQUALS">("ABOVE");
-  const [targetPrice, setTargetPrice] = useState<string>(currentPrice?.toString() || "");
+  const [condition, setCondition] = useState<"ABOVE" | "BELOW" | "EQUALS">(
+    "ABOVE"
+  );
+  const [targetPrice, setTargetPrice] = useState<string>(
+    currentPrice?.toString() || ""
+  );
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const price = parseFloat(targetPrice);
     if (isNaN(price) || price <= 0) {
       showToast("error", "Masukkan harga yang valid");
@@ -91,27 +95,27 @@ export default function CreateAlertModal({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md rounded-2xl bg-linear-to-br from-gray-900 to-gray-800 p-6 shadow-2xl border border-white/10"
+              className="relative w-full max-w-md rounded-2xl border border-white/10 bg-linear-to-br from-gray-900 to-gray-800 p-6 shadow-2xl"
             >
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
+                className="absolute top-4 right-4 text-gray-400 transition-colors hover:text-white"
               >
                 <FiX className="size-6" />
               </button>
 
               {/* Header */}
               <div className="mb-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="p-2 bg-blue-500/20 rounded-lg">
+                <div className="mb-2 flex items-center gap-3">
+                  <div className="rounded-lg bg-blue-500/20 p-2">
                     <FiBell className="size-6 text-blue-400" />
                   </div>
                   <h2 className="text-2xl font-bold text-white">
                     Buat Price Alert
                   </h2>
                 </div>
-                <p className="text-gray-400 text-sm">
+                <p className="text-sm text-gray-400">
                   Dapatkan notifikasi email saat target harga tercapai
                 </p>
               </div>
@@ -119,8 +123,8 @@ export default function CreateAlertModal({
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Symbol Display */}
-                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                  <div className="text-sm text-gray-400 mb-1">Simbol</div>
+                <div className="rounded-lg border border-white/10 bg-white/5 p-4">
+                  <div className="mb-1 text-sm text-gray-400">Simbol</div>
                   <div className="text-lg font-bold text-white">
                     {symbol}
                     <span className="ml-2 text-sm text-gray-400">
@@ -128,7 +132,7 @@ export default function CreateAlertModal({
                     </span>
                   </div>
                   {currentPrice && (
-                    <div className="text-sm text-gray-400 mt-1">
+                    <div className="mt-1 text-sm text-gray-400">
                       Harga Saat Ini: Rp {currentPrice.toLocaleString("id-ID")}
                     </div>
                   )}
@@ -136,44 +140,44 @@ export default function CreateAlertModal({
 
                 {/* Condition Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
                     Kondisi Alert
                   </label>
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setCondition("ABOVE")}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`rounded-lg border-2 p-3 transition-all ${
                         condition === "ABOVE"
                           ? "border-green-500 bg-green-500/20 text-green-400"
                           : "border-white/20 bg-white/5 text-gray-400 hover:border-white/30"
                       }`}
                     >
-                      <FiTrendingUp className="size-5 mx-auto mb-1" />
+                      <FiTrendingUp className="mx-auto mb-1 size-5" />
                       <div className="text-xs font-medium">Di Atas</div>
                     </button>
                     <button
                       type="button"
                       onClick={() => setCondition("BELOW")}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`rounded-lg border-2 p-3 transition-all ${
                         condition === "BELOW"
                           ? "border-red-500 bg-red-500/20 text-red-400"
                           : "border-white/20 bg-white/5 text-gray-400 hover:border-white/30"
                       }`}
                     >
-                      <FiTrendingDown className="size-5 mx-auto mb-1" />
+                      <FiTrendingDown className="mx-auto mb-1 size-5" />
                       <div className="text-xs font-medium">Di Bawah</div>
                     </button>
                     <button
                       type="button"
                       onClick={() => setCondition("EQUALS")}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`rounded-lg border-2 p-3 transition-all ${
                         condition === "EQUALS"
                           ? "border-blue-500 bg-blue-500/20 text-blue-400"
                           : "border-white/20 bg-white/5 text-gray-400 hover:border-white/30"
                       }`}
                     >
-                      <div className="text-lg font-bold mx-auto mb-1">=</div>
+                      <div className="mx-auto mb-1 text-lg font-bold">=</div>
                       <div className="text-xs font-medium">Sama Dengan</div>
                     </button>
                   </div>
@@ -181,7 +185,7 @@ export default function CreateAlertModal({
 
                 {/* Target Price */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
                     Target Harga (IDR)
                   </label>
                   <input
@@ -192,14 +196,15 @@ export default function CreateAlertModal({
                     step="0.01"
                     min="0"
                     required
-                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-white placeholder-gray-500 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                 </div>
 
                 {/* Info */}
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <div className="rounded-lg border border-blue-500/20 bg-blue-500/10 p-3">
                   <p className="text-xs text-blue-300">
-                    💡 Alert akan otomatis dinonaktifkan setelah tercapai. Pengguna gratis dibatasi maksimal 10 active alerts.
+                    💡 Alert akan otomatis dinonaktifkan setelah tercapai.
+                    Pengguna gratis dibatasi maksimal 10 active alerts.
                   </p>
                 </div>
 

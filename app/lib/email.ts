@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const resend = process.env.RESEND_API_KEY 
+const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
@@ -50,7 +50,8 @@ export async function sendPriceAlertEmail({
 
     const subject = `🔔 Alert Harga: ${symbol} ${conditionText} ${formattedTarget}`;
 
-    const baseUrl = process.env.NEXTAUTH_URL || "https://berita-finansial.vercel.app";
+    const baseUrl =
+      process.env.NEXTAUTH_URL || "https://berita-finansial.vercel.app";
 
     const htmlContent = `<!DOCTYPE html>
 <html>
@@ -131,7 +132,9 @@ export async function sendPriceAlertEmail({
 </html>`;
 
     const { data, error } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || "Berita Finansial <alerts@berita-finansial.com>",
+      from:
+        process.env.RESEND_FROM_EMAIL ||
+        "Berita Finansial <alerts@berita-finansial.com>",
       to,
       subject,
       html: htmlContent,

@@ -23,11 +23,18 @@ function validateAlertData(data: unknown) {
     throw new Error("Asset type harus SAHAM atau KRIPTO");
   }
 
-  if (!d.targetPrice || typeof d.targetPrice !== "number" || d.targetPrice <= 0) {
+  if (
+    !d.targetPrice ||
+    typeof d.targetPrice !== "number" ||
+    d.targetPrice <= 0
+  ) {
     throw new Error("Target price harus berupa angka positif");
   }
 
-  if (!d.condition || !["ABOVE", "BELOW", "EQUALS"].includes(String(d.condition))) {
+  if (
+    !d.condition ||
+    !["ABOVE", "BELOW", "EQUALS"].includes(String(d.condition))
+  ) {
     throw new Error("Condition harus ABOVE, BELOW, atau EQUALS");
   }
 
@@ -101,7 +108,8 @@ export const POST = withRateLimit(
         if (activeAlertCount >= 10) {
           return NextResponse.json(
             {
-              error: "Maksimal 10 alert untuk pengguna gratis. Upgrade ke Premium untuk unlimited alerts.",
+              error:
+                "Maksimal 10 alert untuk pengguna gratis. Upgrade ke Premium untuk unlimited alerts.",
             },
             { status: 403 }
           );
