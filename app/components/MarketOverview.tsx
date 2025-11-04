@@ -1,6 +1,7 @@
 "use client";
 
 import { getCryptoPrices, type CryptoPrice } from "@/app/lib/api/coingecko";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FiActivity, FiArrowRight, FiTrendingUp } from "react-icons/fi";
@@ -156,7 +157,18 @@ export default function MarketOverview() {
                 Live Data
               </span>
             </div>
-            <div className="space-y-4">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              className="space-y-4"
+            >
               {isLoading ? (
                 <>
                   <SkeletonMarketCard />
@@ -165,28 +177,42 @@ export default function MarketOverview() {
                 </>
               ) : cryptoData.length > 0 ? (
                 cryptoData.map((crypto) => (
-                  <MarketCard
+                  <motion.div
                     key={crypto.id}
-                    data={{
-                      symbol: crypto.symbol.toUpperCase(),
-                      name: crypto.name,
-                      price: crypto.current_price,
-                      change24h:
-                        (crypto.current_price *
-                          crypto.price_change_percentage_24h) /
-                        100,
-                      changePercent: crypto.price_change_percentage_24h,
-                      volume: crypto.total_volume,
-                      lastUpdated: crypto.last_updated,
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: {
+                          duration: 0.3,
+                          ease: "easeOut",
+                        },
+                      },
                     }}
-                  />
+                  >
+                    <MarketCard
+                      data={{
+                        symbol: crypto.symbol.toUpperCase(),
+                        name: crypto.name,
+                        price: crypto.current_price,
+                        change24h:
+                          (crypto.current_price *
+                            crypto.price_change_percentage_24h) /
+                          100,
+                        changePercent: crypto.price_change_percentage_24h,
+                        volume: crypto.total_volume,
+                        lastUpdated: crypto.last_updated,
+                      }}
+                    />
+                  </motion.div>
                 ))
               ) : (
                 <div className="py-8 text-center text-gray-500 dark:text-gray-400">
                   Tidak ada data tersedia
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>

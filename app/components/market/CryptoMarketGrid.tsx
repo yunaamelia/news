@@ -1,6 +1,7 @@
 "use client";
 
 import { getCryptoPrices, type CryptoPrice } from "@/app/lib/api/coingecko";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { SkeletonMarketCard } from "../ui/Skeleton";
 import MarketCard from "./MarketCard";
@@ -106,47 +107,80 @@ export default function CryptoMarketGrid({
           </div>
         )}
 
-        {/* Data Grid */}
-        {!isLoading && !error && cryptoData.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {cryptoData.map((crypto) => (
-              <div
-                key={crypto.id}
-                className="glass-card rounded-2xl border border-purple-500/20 p-6 transition-all hover:scale-[1.02] hover:border-purple-400/50 hover:shadow-2xl hover:shadow-purple-500/10"
-              >
-                <MarketCard
-                  data={{
-                    symbol: crypto.symbol.toUpperCase(),
-                    name: crypto.name,
-                    price: crypto.current_price,
-                    change24h:
-                      (crypto.current_price *
-                        crypto.price_change_percentage_24h) /
-                      100,
-                    changePercent: crypto.price_change_percentage_24h,
-                    volume: crypto.total_volume,
-                    lastUpdated: crypto.last_updated,
+        {/* Data Grid with Animations */}
+        <AnimatePresence mode="wait">
+          {!isLoading && !error && cryptoData.length > 0 && (
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              variants={{
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.05,
+                  },
+                },
+                hidden: { opacity: 0 },
+                exit: { opacity: 0 },
+              }}
+              className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            >
+              {cryptoData.map((crypto) => (
+                <motion.div
+                  key={crypto.id}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: {
+                        duration: 0.4,
+                        ease: "easeOut",
+                      },
+                    },
+                    exit: { opacity: 0, y: -20 },
                   }}
-                />
-                {/* Additional Info */}
-                <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Market Cap</p>
-                    <p className="text-sm font-semibold text-white">
-                      {formatIDR(crypto.market_cap)}
-                    </p>
+                  whileHover={{
+                    scale: 1.02,
+                    transition: { duration: 0.2 },
+                  }}
+                  className="glass-card rounded-2xl border border-purple-500/20 p-6 transition-colors hover:border-purple-400/50 hover:shadow-2xl hover:shadow-purple-500/10"
+                >
+                  <MarketCard
+                    data={{
+                      symbol: crypto.symbol.toUpperCase(),
+                      name: crypto.name,
+                      price: crypto.current_price,
+                      change24h:
+                        (crypto.current_price *
+                          crypto.price_change_percentage_24h) /
+                        100,
+                      changePercent: crypto.price_change_percentage_24h,
+                      volume: crypto.total_volume,
+                      lastUpdated: crypto.last_updated,
+                    }}
+                  />
+                  {/* Additional Info */}
+                  <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/10 pt-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Market Cap</p>
+                      <p className="text-sm font-semibold text-white">
+                        {formatIDR(crypto.market_cap)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">24h Volume</p>
+                      <p className="text-sm font-semibold text-white">
+                        {formatIDR(crypto.total_volume)}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-500">24h Volume</p>
-                    <p className="text-sm font-semibold text-white">
-                      {formatIDR(crypto.total_volume)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Empty State */}
         {!isLoading && !error && cryptoData.length === 0 && (
