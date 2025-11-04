@@ -1,4 +1,4 @@
-import prisma from "@/app/lib/prisma";
+// import prisma from "@/app/lib/prisma";
 import { Metadata } from "next";
 import Link from "next/link";
 import { FiArrowRight, FiClock, FiTrendingUp, FiUser } from "react-icons/fi";
@@ -23,7 +23,8 @@ interface Article {
 
 async function getArticles(): Promise<Article[]> {
   try {
-    const articles = await prisma.article.findMany({
+    return [];
+    /* const articles = await prisma.article.findMany({
       where: {
         status: "PUBLISHED",
         category: "KRIPTO",
@@ -50,7 +51,7 @@ async function getArticles(): Promise<Article[]> {
       imageUrl: a.coverImage ?? null,
       publishedAt: a.publishedAt?.toISOString() ?? new Date().toISOString(),
       author: a.author ? { name: a.author } : null,
-    }));
+    })); */
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
       console.error("Error fetching articles:", error);
