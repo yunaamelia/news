@@ -1,22 +1,28 @@
 /**
  * Google Gemini 1.5 Flash Client
- * 
+ *
  * GRATIS untuk 1.500 requests/hari
  * Perfect untuk budget terbatas!
- * 
+ *
  * Pricing:
  * - Free tier: 15 RPM, 1.5K RPD, 1M RPD
  * - Paid: $0.075 input, $0.30 output per 1M tokens
- * 
+ *
  * Get API Key: https://aistudio.google.com/apikey
  */
 
-import { GoogleGenerativeAI, GenerativeModel, GenerationConfig } from '@google/generative-ai';
+import {
+  GenerationConfig,
+  GenerativeModel,
+  GoogleGenerativeAI,
+} from "@google/generative-ai";
 
-const API_KEY = process.env.GEMINI_API_KEY || '';
+const API_KEY = process.env.GEMINI_API_KEY || "";
 
 if (!API_KEY) {
-  console.warn('⚠️ GEMINI_API_KEY not set. Get free key: https://aistudio.google.com/apikey');
+  console.warn(
+    "⚠️ GEMINI_API_KEY not set. Get free key: https://aistudio.google.com/apikey"
+  );
 }
 
 export interface GeminiGenerateOptions {
@@ -43,7 +49,13 @@ export class GeminiClient {
   private model: GenerativeModel;
   private modelName: string;
 
-  constructor(modelName: 'gemini-1.5-flash' | 'gemini-1.5-pro' = 'gemini-1.5-flash') {
+  constructor(
+    modelName:
+      | "gemini-2.0-flash-exp"
+      | "gemini-1.5-flash"
+      | "gemini-1.5-flash-8b"
+      | "gemini-1.5-pro" = "gemini-2.0-flash-exp" // Newest, fastest, cheapest!
+  ) {
     this.genAI = new GoogleGenerativeAI(API_KEY);
     this.modelName = modelName;
     this.model = this.genAI.getGenerativeModel({ model: modelName });
@@ -71,12 +83,10 @@ export class GeminiClient {
       };
 
       // Combine system prompt with user prompt
-      const fullPrompt = systemPrompt 
-        ? `${systemPrompt}\n\n${prompt}`
-        : prompt;
+      const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
 
       const result = await this.model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: fullPrompt }] }],
+        contents: [{ role: "user", parts: [{ text: fullPrompt }] }],
         generationConfig,
       });
 
@@ -95,9 +105,10 @@ export class GeminiClient {
         usage,
         model: this.modelName,
       };
-    } catch (error: any) {
-      console.error('Gemini generation error:', error);
-      throw new Error(`Gemini API error: ${error.message}`);
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error("Gemini generation error:", err);
+      throw new Error(`Gemini API error: ${err.message}`);
     }
   }
 
@@ -117,7 +128,7 @@ Panjang: Maksimal 15 kata.`,
       maxTokens: 100,
     });
 
-    return response.content.trim().replace(/^["']|["']$/g, '');
+    return response.content.trim().replace(/^["']|["']$/g, "");
   }
 
   /**
@@ -126,7 +137,7 @@ Panjang: Maksimal 15 kata.`,
    */
   async generateArticle(params: {
     topic: string;
-    category: 'SAHAM' | 'KRIPTO' | 'ANALISIS' | 'EDUKASI' | 'REGULASI';
+    category: "SAHAM" | "KRIPTO" | "ANALISIS" | "EDUKASI" | "REGULASI";
     targetWords?: number;
     includeData?: string;
   }): Promise<{ headline: string; content: string }> {
@@ -166,13 +177,14 @@ Jangan tambahkan catatan atau komentar di luar artikel.`;
     // Parse headline and content
     const text = response.content.trim();
     const headlineMatch = text.match(/^#\s*(.+)$/m);
-    const headline = headlineMatch 
-      ? headlineMatch[1].trim() 
-      : text.split('\n')[0].replace(/^#+\s*/, '').trim();
-    
-    const content = text
-      .replace(/^#\s*.+$/m, '')
-      .trim();
+    const headline = headlineMatch
+      ? headlineMatch[1].trim()
+      : text
+          .split("\n")[0]
+          .replace(/^#+\s*/, "")
+          .trim();
+
+    const content = text.replace(/^#\s*.+$/m, "").trim();
 
     return { headline, content };
   }
@@ -181,7 +193,10 @@ Jangan tambahkan catatan atau komentar di luar artikel.`;
    * Generate multiple headlines and pick the best
    * Good for A/B testing
    */
-  async generateMultipleHeadlines(topic: string, count: number = 3): Promise<string[]> {
+  async generateMultipleHeadlines(
+    topic: string,
+    count: number = 3
+  ): Promise<string[]> {
     const response = await this.generate({
       systemPrompt: `Anda adalah jurnalis keuangan profesional.
 Tugas: Buat ${count} variasi headline berita yang berbeda untuk topik yang sama.
@@ -193,10 +208,10 @@ Panjang: Maksimal 15 kata per headline.`,
     });
 
     const headlines = response.content
-      .split('\n')
-      .map(line => line.trim())
-      .filter(line => line && !line.match(/^\d+\./)) // Remove numbered lines
-      .map(line => line.replace(/^[-•*]\s*/, '')) // Remove bullets
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line && !line.match(/^\d+\./)) // Remove numbered lines
+      .map((line) => line.replace(/^[-•*]\s*/, "")) // Remove bullets
       .slice(0, count);
 
     return headlines;
@@ -205,10 +220,13 @@ Panjang: Maksimal 15 kata per headline.`,
   /**
    * Batch generate articles (efficient for multiple topics)
    */
-  async batchGenerate(topics: string[], category: string): Promise<Array<{ topic: string; headline: string; content: string }>> {
+  async batchGenerate(
+    topics: string[],
+    category: string
+  ): Promise<Array<{ topic: string; headline: string; content: string }>> {
     const prompt = `Buat artikel singkat (100 kata) untuk setiap topik berikut:
 
-${topics.map((topic, i) => `${i + 1}. ${topic}`).join('\n')}
+${topics.map((topic, i) => `${i + 1}. ${topic}`).join("\n")}
 
 Format setiap artikel:
 ---
@@ -227,15 +245,17 @@ Pisahkan dengan "---" antar artikel.`;
 
     // Parse batch response
     const articles = response.content
-      .split('---')
-      .map(article => article.trim())
-      .filter(article => article.length > 10);
+      .split("---")
+      .map((article) => article.trim())
+      .filter((article) => article.length > 10);
 
     return topics.map((topic, i) => {
-      const article = articles[i] || '';
+      const article = articles[i] || "";
       const headlineMatch = article.match(/^#\s*(.+)$/m);
-      const headline = headlineMatch ? headlineMatch[1].trim() : `Berita ${category}`;
-      const content = article.replace(/^#\s*.+$/m, '').trim();
+      const headline = headlineMatch
+        ? headlineMatch[1].trim()
+        : `Berita ${category}`;
+      const content = article.replace(/^#\s*.+$/m, "").trim();
 
       return { topic, headline, content };
     });
@@ -246,38 +266,62 @@ Pisahkan dengan "---" antar artikel.`;
    */
   calculateCost(promptTokens: number, completionTokens: number): number {
     const INPUT_COST = 0.075 / 1_000_000; // $0.075 per 1M tokens
-    const OUTPUT_COST = 0.30 / 1_000_000; // $0.30 per 1M tokens
-    
-    return (promptTokens * INPUT_COST) + (completionTokens * OUTPUT_COST);
+    const OUTPUT_COST = 0.3 / 1_000_000; // $0.30 per 1M tokens
+
+    return promptTokens * INPUT_COST + completionTokens * OUTPUT_COST;
   }
 
   /**
    * Get model information
    */
   getModelInfo() {
-    const pricing = this.modelName === 'gemini-1.5-flash'
-      ? {
-          input: '$0.075 per 1M tokens',
-          output: '$0.30 per 1M tokens',
-          freeTier: '15 RPM, 1.5K RPD, 1M RPD',
-        }
-      : {
-          input: '$1.25 per 1M tokens',
-          output: '$5.00 per 1M tokens',
-          freeTier: '2 RPM, 50 RPD',
-        };
+    const pricing =
+      this.modelName === "gemini-2.0-flash-exp"
+        ? {
+            input: "FREE (experimental)",
+            output: "FREE (experimental)",
+            freeTier: "10 RPM, 1.5K RPD (higher limits coming)",
+            note: "⚡ Fastest & newest model, perfect for production!",
+          }
+        : this.modelName === "gemini-1.5-flash-8b"
+          ? {
+              input: "$0.0375 per 1M tokens (50% cheaper!)",
+              output: "$0.15 per 1M tokens (50% cheaper!)",
+              freeTier: "15 RPM, 1.5K RPD",
+            }
+          : this.modelName === "gemini-1.5-flash"
+            ? {
+                input: "$0.075 per 1M tokens",
+                output: "$0.30 per 1M tokens",
+                freeTier: "15 RPM, 1.5K RPD, 1M RPD",
+              }
+            : {
+                input: "$1.25 per 1M tokens",
+                output: "$5.00 per 1M tokens",
+                freeTier: "2 RPM, 50 RPD",
+              };
 
     return {
       model: this.modelName,
-      provider: 'Google AI Studio',
-      contextWindow: 1_000_000, // 1M tokens!
-      features: ['Fast', 'Cheap', 'Multilingual', 'Long Context'],
+      provider: "Google AI Studio",
+      contextWindow: this.modelName.startsWith("gemini-2")
+        ? 1_000_000
+        : 1_000_000,
+      features:
+        this.modelName === "gemini-2.0-flash-exp"
+          ? ["⚡ Ultra Fast", "🆓 FREE", "🧠 Multimodal", "🌏 Multilingual"]
+          : ["Fast", "Cheap", "Multilingual", "Long Context"],
       pricing,
-      apiKeyUrl: 'https://aistudio.google.com/apikey',
+      apiKeyUrl: "https://aistudio.google.com/apikey",
     };
   }
 }
 
 // Export singleton instances
-export const geminiFlash = new GeminiClient('gemini-1.5-flash'); // RECOMMENDED for budget
-export const geminiPro = new GeminiClient('gemini-1.5-pro'); // For complex analysis
+export const gemini2Flash = new GeminiClient("gemini-2.0-flash-exp"); // NEWEST & FASTEST (FREE!)
+export const geminiFlash8b = new GeminiClient("gemini-1.5-flash-8b"); // 50% cheaper
+export const geminiFlash = new GeminiClient("gemini-1.5-flash"); // Stable version
+export const geminiPro = new GeminiClient("gemini-1.5-pro"); // For complex analysis
+
+// Recommended: Use Gemini 2.0 Flash for best performance + FREE!
+export default gemini2Flash;

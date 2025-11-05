@@ -1,9 +1,9 @@
 /**
  * Qwen3-Next-80B-A3B-Thinking Client for Vertex AI
- * 
+ *
  * OpenAI-compatible API wrapper for Qwen3-Next model via Google Vertex AI
  * Model: qwen/qwen3-next-80b-a3b-thinking-maas (MaaS endpoint)
- * 
+ *
  * Features:
  * - Thinking/Reasoning model (80B params, 3B activated per inference)
  * - 256K context window
@@ -11,16 +11,17 @@
  * - Cost: ~$0.50-1.00 per million tokens
  */
 
-import { GoogleAuth } from 'google-auth-library';
+import { GoogleAuth } from "google-auth-library";
 
 // Configuration
-const ENDPOINT = process.env.VERTEX_AI_ENDPOINT || 'aiplatform.googleapis.com';
-const REGION = process.env.VERTEX_AI_REGION || 'global';
-const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'protean-tooling-476420-i8';
-const MODEL_ID = 'qwen/qwen3-next-80b-a3b-thinking-maas';
+const ENDPOINT = process.env.VERTEX_AI_ENDPOINT || "aiplatform.googleapis.com";
+const REGION = process.env.VERTEX_AI_REGION || "global";
+const PROJECT_ID =
+  process.env.GOOGLE_CLOUD_PROJECT || "protean-tooling-476420-i8";
+const MODEL_ID = "qwen/qwen3-next-80b-a3b-thinking-maas";
 
 export interface QwenMessage {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
@@ -53,14 +54,14 @@ export class QwenVertexAIClient {
 
   constructor() {
     this.auth = new GoogleAuth({
-      scopes: 'https://www.googleapis.com/auth/cloud-platform',
+      scopes: "https://www.googleapis.com/auth/cloud-platform",
     });
     this.endpoint = `https://${ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${REGION}/endpoints/openapi/chat/completions`;
   }
 
   /**
    * Generate content using Qwen3-Next model
-   * 
+   *
    * @param options - Generation options
    * @returns Generated content and metadata
    */
@@ -80,7 +81,7 @@ export class QwenVertexAIClient {
       const accessToken = await client.getAccessToken();
 
       if (!accessToken.token) {
-        throw new Error('Failed to get access token');
+        throw new Error("Failed to get access token");
       }
 
       const requestBody: any = {
@@ -99,19 +100,17 @@ export class QwenVertexAIClient {
         requestBody.presence_penalty = presencePenalty;
 
       const response = await fetch(this.endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken.token}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `Qwen API error ${response.status}: ${errorText}`
-        );
+        throw new Error(`Qwen API error ${response.status}: ${errorText}`);
       }
 
       const result = await response.json();
@@ -119,23 +118,23 @@ export class QwenVertexAIClient {
       // Extract response data
       const choice = result.choices?.[0];
       if (!choice) {
-        throw new Error('No response from Qwen model');
+        throw new Error("No response from Qwen model");
       }
 
       return {
-        content: choice.message?.content || '',
+        content: choice.message?.content || "",
         reasoningContent: choice.message?.reasoning_content,
-        finishReason: choice.finish_reason || 'unknown',
+        finishReason: choice.finish_reason || "unknown",
         usage: {
           promptTokens: result.usage?.prompt_tokens || 0,
           completionTokens: result.usage?.completion_tokens || 0,
           totalTokens: result.usage?.total_tokens || 0,
         },
         model: result.model || MODEL_ID,
-        id: result.id || '',
+        id: result.id || "",
       };
     } catch (error) {
-      console.error('Qwen generation error:', error);
+      console.error("Qwen generation error:", error);
       throw error;
     }
   }
@@ -148,12 +147,12 @@ export class QwenVertexAIClient {
     const response = await this.generate({
       messages: [
         {
-          role: 'system',
+          role: "system",
           content:
-            'Anda adalah jurnalis keuangan profesional. Buat headline berita yang singkat, informatif, dan menarik. Langsung berikan headline tanpa penjelasan.',
+            "Anda adalah jurnalis keuangan profesional. Buat headline berita yang singkat, informatif, dan menarik. Langsung berikan headline tanpa penjelasan.",
         },
         {
-          role: 'user',
+          role: "user",
           content: `Buatkan 1 headline berita finansial tentang: ${topic}. Maksimal 15 kata.`,
         },
       ],
@@ -172,13 +171,17 @@ export class QwenVertexAIClient {
     topic: string;
     category: string;
     targetWords?: number;
-  }): Promise<{ headline: string; content: string; usage: QwenResponse['usage'] }> {
+  }): Promise<{
+    headline: string;
+    content: string;
+    usage: QwenResponse["usage"];
+  }> {
     const { topic, category, targetWords = 200 } = params;
 
     const response = await this.generate({
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: `Anda adalah jurnalis keuangan profesional Indonesia. Tulis artikel berita yang:
 - Informatif dan objektif
 - Menggunakan bahasa Indonesia formal
@@ -187,7 +190,7 @@ export class QwenVertexAIClient {
 - Format: Headline diikuti konten artikel`,
         },
         {
-          role: 'user',
+          role: "user",
           content: `Buatkan artikel berita kategori ${category} tentang: ${topic}. 
 Target ${targetWords} kata. 
 Format:
@@ -202,12 +205,12 @@ Format:
 
     // Parse headline and content
     const text = response.content.trim();
-    const lines = text.split('\n');
+    const lines = text.split("\n");
     const headlineMatch = text.match(/^#\s*(.+)$/m);
-    const headline = headlineMatch ? headlineMatch[1].trim() : lines[0].replace('#', '').trim();
-    const content = text
-      .replace(/^#\s*.+$/m, '')
-      .trim();
+    const headline = headlineMatch
+      ? headlineMatch[1].trim()
+      : lines[0].replace("#", "").trim();
+    const content = text.replace(/^#\s*.+$/m, "").trim();
 
     return {
       headline,
@@ -235,9 +238,9 @@ Format:
       region: REGION,
       project: PROJECT_ID,
       contextWindow: 256000,
-      architecture: 'Ultra-Sparse MoE (80B/3B)',
-      features: ['Reasoning/Thinking', 'Long Context', 'Multilingual'],
-      costEstimate: '$0.50-1.00 per million tokens',
+      architecture: "Ultra-Sparse MoE (80B/3B)",
+      features: ["Reasoning/Thinking", "Long Context", "Multilingual"],
+      costEstimate: "$0.50-1.00 per million tokens",
     };
   }
 }
