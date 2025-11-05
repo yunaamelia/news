@@ -24,8 +24,8 @@ async function main() {
     );
     console.log("✅ Headline:", headline);
     console.log("💰 Cost: $0 (Free tier)");
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
     console.log("\n💡 Setup required:");
     console.log("1. Get free API key: https://aistudio.google.com/apikey");
     console.log("2. Add to .env.local: GEMINI_API_KEY=your-key");
@@ -48,8 +48,8 @@ async function main() {
     console.log("\n📰 Content (first 300 chars):");
     console.log(article.content.substring(0, 300) + "...");
     console.log("\n💰 Cost: ~$0.0001 (practically FREE)");
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
   console.log("\n");
 
@@ -66,8 +66,8 @@ async function main() {
       console.log(`${i + 1}. ${headline}`);
     });
     console.log("\n💰 Cost: ~$0.00002 (basically FREE)");
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
   console.log("\n");
 
@@ -91,8 +91,8 @@ async function main() {
     });
 
     console.log("\n💰 Cost for 3 articles: ~$0.0003 (SUPER CHEAP!)");
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
   console.log("\n");
 

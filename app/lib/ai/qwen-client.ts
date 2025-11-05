@@ -84,7 +84,7 @@ export class QwenVertexAIClient {
         throw new Error("Failed to get access token");
       }
 
-      const requestBody: any = {
+      const requestBody: Record<string, unknown> = {
         model: MODEL_ID,
         messages,
         temperature,

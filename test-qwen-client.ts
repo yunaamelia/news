@@ -18,8 +18,8 @@ async function main() {
       "Bitcoin mencapai harga tertinggi baru di $68,000"
     );
     console.log("✅ Headline:", headline);
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
   console.log("\n");
 
@@ -44,8 +44,8 @@ async function main() {
       "  Estimated cost: $" +
         qwenClient.calculateCost(article.usage.totalTokens).toFixed(4)
     );
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
   console.log("\n");
 
@@ -84,8 +84,8 @@ async function main() {
         "chars"
       );
     }
-  } catch (error: any) {
-    console.error("❌ Error:", error.message);
+  } catch (error: unknown) {
+    console.error("❌ Error:", error instanceof Error ? error.message : String(error));
   }
 
   console.log("\n" + "=".repeat(70));
