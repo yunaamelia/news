@@ -13,16 +13,10 @@
  * @see https://github.com/gadicc/node-yahoo-finance2
  */
 
-// Use dynamic import for yahoo-finance2
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-let yahooFinanceModule: any = null;
-
-async function getYahooFinance() {
-  if (!yahooFinanceModule) {
-    yahooFinanceModule = await import("yahoo-finance2");
-  }
-  return yahooFinanceModule.default;
-}
+// Note: yahoo-finance2 v3+ uses ESM but Next.js Edge runtime needs special handling
+// Using require() for compatibility with Turbopack
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const yahooFinance = require("yahoo-finance2").default;
 
 export interface StockPrice {
   symbol: string; // BBCA (without .JK)
@@ -221,8 +215,6 @@ const getFallbackStockData = (symbols: string[]): StockPrice[] => {
  */
 export async function getStockPrices(symbols: string[]): Promise<StockPrice[]> {
   try {
-    const yahooFinance = await getYahooFinance();
-
     // Convert to Yahoo Finance format
     const yahooSymbols = symbols.map(toYahooSymbol);
 
@@ -280,8 +272,6 @@ export async function getSingleStockPrice(symbol: string): Promise<StockPrice> {
  */
 export async function getIHSGIndex(): Promise<IHSGIndex> {
   try {
-    const yahooFinance = await getYahooFinance();
-
     // Yahoo Finance symbol for IHSG: ^JKSE
     const quote = await yahooFinance.quote("^JKSE");
 
